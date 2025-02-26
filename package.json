@@ -1,0 +1,22 @@
+{
+  "name": "basic-mern-setup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "frontend":"cd frontend && npm run dev",
+    "frontendInstall":"cd frontend && npm i",
+    "backend":"cd backend && npm start",
+    "backendInstall":"cd backend && npm i",
+    "installDep": "concurrently \"npm i\"  \"npm run backendInstall\" \"npm run frontendInstall\"",
+    "application": "concurrently  \"npm run backend\" \"npm run frontend\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
