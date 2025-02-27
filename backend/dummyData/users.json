@@ -1,0 +1,51 @@
+[
+    {
+      "username": "alice_wonder",
+      "email": "alice@example.com",
+      "password": "hashed_password_abc",
+      "professionalStatus": "student",
+      "education": [
+        {
+          "courseName": "B.Tech in Computer Science",
+          "from": 2018,
+          "to": 2022,
+          "institute": "Institute of Technology"
+        }
+      ],
+      "isAvailable": true,
+      "isActivated": false
+    },
+    {
+      "username": "bob_builder",
+      "email": "bob@example.com",
+      "password": "hashed_password_xyz",
+      "professionalStatus": "professional",
+      "education": [
+        {
+          "courseName": "Diploma in Civil Engineering",
+          "from": 2010,
+          "to": 2013,
+          "institute": "City Technical Institute"
+        }
+      ],
+      "isAvailable": true,
+      "isActivated": false
+    },
+    {
+      "username": "charlie_chaplin",
+      "email": "charlie@example.com",
+      "password": "hashed_password_123",
+      "professionalStatus": "student",
+      "education": [
+        {
+          "courseName": "Bachelor of Arts in Acting",
+          "from": 2015,
+          "to": 2019,
+          "institute": "Drama School"
+        }
+      ],
+      "isAvailable": true,
+      "isActivated": false
+    }
+  ]
+  
