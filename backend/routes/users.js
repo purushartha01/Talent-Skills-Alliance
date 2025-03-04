@@ -12,7 +12,12 @@ userRouter.route('/profile')
     .post(userController.setUserProfile)
     .put(userController.updateUserProfile)
 
+
 userRouter.route('/remove')
     .post(userController.removeUser);
 
-module.exports = userRouter
+
+//TODO: add view profile controller handler
+userRouter.route('/view/:id');
+
+module.exports = userRouter;

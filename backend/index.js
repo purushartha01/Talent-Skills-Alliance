@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser')
 
 //module imports
 const { logger } = require('./middlewares/logger');
-const { portno, dbConnectionString } = require('./config/serverConfig');
+const { portno, dbConnectionString, cookieSecret } = require('./config/serverConfig');
 const { connectToDb } = require('./config/dbConfig');
 const { errorHandler } = require('./middlewares/errorHandler');
 const auths = require('./routes/auths');
@@ -23,7 +23,11 @@ app.use(cors(
         credentials: true,
     }
 ))
-app.use(cookieParser())//TODO: NOTE=>cookies will be available either through req.cookies(without secret) and req.signedCookies(for signed data use in secret)
+
+// app.use(cookieParser())//handles unsigned cookies
+
+
+app.use(cookieParser(cookieSecret))//TODO: NOTE=>cookies will be available either through req.cookies(without secret) and req.signedCookies(for signed data use in secret)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 

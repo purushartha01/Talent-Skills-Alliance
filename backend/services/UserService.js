@@ -21,10 +21,7 @@ const findAllUsers = async () => {
 
 const userExists = async (email) => {
     const user = await UserModel.findOne({ email: email });
-    if (!user) return false;
-    console.log('Existing user: ', user);
-
-    return true;
+    return user;
 }
 
 module.exports = {
