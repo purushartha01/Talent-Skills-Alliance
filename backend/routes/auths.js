@@ -9,4 +9,6 @@ authRouter.route('/login')
 authRouter.route('/register')
     .post(authController.signupActionHandler);
 
+// auth
+
 module.exports = authRouter;

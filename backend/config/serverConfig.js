@@ -36,7 +36,10 @@ const cookieOptionsRefresh = {
     signed: true
 }
 
+const mailerID = process.env.HELP_GMAIL;
+const mailerPassKey = process.env.APP_PWD_HELP_GMAIL;
+
 
 module.exports = {
-    portno, dbConnectionString, jwt_options_access, jwt_options_refresh, ACCESS_KEY, REFRESH_KEY, cookieOptionsAccess, cookieOptionsRefresh, cookieSecret
+    portno, dbConnectionString, jwt_options_access, jwt_options_refresh, ACCESS_KEY, REFRESH_KEY, cookieOptionsAccess, cookieOptionsRefresh, cookieSecret, mailerID, mailerPassKey
 }

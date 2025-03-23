@@ -24,6 +24,12 @@ const userExists = async (email) => {
     return user;
 }
 
+const updateUserByEmail = async (email, update) => {
+    const updatedUser = await UserModel.findOneAndUpdate(email, update, { new: true });
+    return updatedUser;
+}
+
+
 module.exports = {
-    findAllUsers, findUserByEmail, findUserByUsername, userExists, createNewUser
+    findAllUsers, findUserByEmail, findUserByUsername, userExists, createNewUser, updateUserByEmail
 }

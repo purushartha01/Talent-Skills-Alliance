@@ -70,6 +70,14 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    otpData: {
+        currOTP: {
+            type: String
+        },
+        validTill: {
+            type: Date
+        }
     }
 }, {
     timestamps: true
@@ -92,7 +100,7 @@ UserSchema.pre('save', async function (next) {
 //     return await bcrypt.compare(userPassword, this.password);
 // }
 
-UserSchema.methods.matchPassword=async function (userPassword) {
+UserSchema.methods.matchPassword = async function (userPassword) {
     return await bcrypt.compare(userPassword, this.password);
 }
 
