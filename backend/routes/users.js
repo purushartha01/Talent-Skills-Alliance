@@ -9,12 +9,11 @@ userRouter.use(authMiddleware)
 
 userRouter.route('/profile')
     .get(userController.getUserProfile)
-    .post(userController.setUserProfile)
     .put(userController.updateUserProfile)
 
 
-userRouter.route('/remove')
-    .post(userController.removeUser);
+userRouter.route('/remove/:userID')
+    .delete(userController.removeUser);
 
 
 //TODO: add view profile controller handler

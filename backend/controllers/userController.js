@@ -1,4 +1,5 @@
 const UserModel = require("../model/User");
+const { removeUserById } = require("../services/UserService");
 
 //TODO: basic logic completed, handling data from DB left.
 const getUserProfile = async (req, res, next) => {
@@ -18,16 +19,6 @@ const getUserProfile = async (req, res, next) => {
     }
 }
 
-const setUserProfile = async (req, res, next) => {
-    try {
-
-    } catch (err) {
-        console.log(err);
-        next(err);
-    }
-}
-
-
 const updateUserProfile = async (req, res, next) => {
     try {
 
@@ -39,7 +30,14 @@ const updateUserProfile = async (req, res, next) => {
 
 const removeUser = async (req, res, next) => {
     try {
-
+        const userID = req.params.userID;
+        if (!userID) {
+            res.locals.statusCode = 422;
+            throw new Error("Request data not provided.");
+        }
+        console.log("User to be removed: ",userID);
+        const removedUser= await removeUserById(userID);
+        res.status(200).json({status:'success',message:'User account removed successfully!'});
     } catch (err) {
         console.log(err);
         next(err);
@@ -47,5 +45,5 @@ const removeUser = async (req, res, next) => {
 }
 
 module.exports = {
-    getUserProfile, setUserProfile, updateUserProfile, removeUser
+    getUserProfile, updateUserProfile, removeUser
 }

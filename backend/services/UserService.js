@@ -29,7 +29,11 @@ const updateUserByEmail = async (email, update) => {
     return updatedUser;
 }
 
+const removeUserById = async (id) => {
+    const removedUser = await UserModel.findByIdAndDelete(id);
+    return removedUser;
+}
 
 module.exports = {
-    findAllUsers, findUserByEmail, findUserByUsername, userExists, createNewUser, updateUserByEmail
+    findAllUsers, findUserByEmail, findUserByUsername, userExists, createNewUser, updateUserByEmail, removeUserById
 }

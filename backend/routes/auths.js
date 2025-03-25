@@ -9,6 +9,11 @@ authRouter.route('/login')
 authRouter.route('/register')
     .post(authController.signupActionHandler);
 
+
+authRouter.route('/verify').post(authController.handleOTPVerification);
+authRouter.route('/generate').post(authController.generateOTP);
+
+
 // auth
 
 module.exports = authRouter;

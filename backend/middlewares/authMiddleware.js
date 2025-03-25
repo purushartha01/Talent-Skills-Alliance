@@ -9,6 +9,7 @@ const authMiddleware = async (req, res, next) => {
         const { AccessToken } = req?.signedCookies;
         console.log("AccessToken: ", AccessToken);
         if (!AccessToken) {
+            console.log('Access Token not found!');
             res.locals.statusCode = 401;
             throw jwt.TokenExpiredError;
         }
@@ -23,7 +24,9 @@ const authMiddleware = async (req, res, next) => {
         try {
             if (err instanceof jwt.TokenExpiredError) {
                 const { RefreshToken } = req?.signedCookies;
+                console.log('RefreshToken: ', RefreshToken);
                 if (!RefreshToken) {
+                    console.log('Refresh Token not found!');
                     res.locals.statusCode = 401;
                     throw new Error("Refresh token not found! Please login again!");
                 }
@@ -44,6 +47,9 @@ const authMiddleware = async (req, res, next) => {
                 } else {
                     next(err);
                 }
+            }
+            else{
+                next(err);
             }
         } catch (err) {
             if (err instanceof jwt.TokenExpiredError) {

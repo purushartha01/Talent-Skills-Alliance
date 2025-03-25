@@ -70,14 +70,6 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
-    },
-    otpData: {
-        currOTP: {
-            type: String
-        },
-        validTill: {
-            type: Date
-        }
     }
 }, {
     timestamps: true

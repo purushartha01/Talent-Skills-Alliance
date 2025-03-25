@@ -10,25 +10,19 @@ const transporter = nodemailer.createTransport({
 
 });
 
-const sendOTP = async (otp, recipientName, recipient) => {
+const sendOTP = async (otp,recipient) => {
     console.log("OTP passed: ", otp, "recipient: ", recipient);
-    const isSent = await transporter.sendMail({
+    return transporter.sendMail({
         from: mailerID,
         to: recipient,
         subject: "Verification OTP",
-        html: `<p>Dear ${recipientName}, Your verification OTP is<b>${otp}</b></p><b>This mail is from Talent&Skills Alliance. If you have not registered or requested this mail, please ignore this mail and do not share this OTP with anyone else.</b>`
-    }, (err) => {
-        if (err) {
-            return false
-        }
+        html: `<p>Dear ${recipient}, Your verification OTP is <b>${otp}</b></p><b>This mail is from Talent&Skills Alliance. If you have not registered or requested this mail, please ignore this mail and do not share this OTP with anyone else.</b>`
     });
-
-    return isSent;
 }
 
 const sendWelcomeMail = async (recipientName, recipient) => {
 
-    const isSent = await transporter.sendMail({
+    return transporter.sendMail({
         from: mailerID,
         to: recipient,
         subject: "Welcome to Talent&Skills Alliance",
@@ -114,10 +108,8 @@ const sendWelcomeMail = async (recipientName, recipient) => {
 </body>
 </html>
 `
-    }, (err) => {
-        if (err) return false
-    });
-    return isSent;
+    })
+    // return isSent;
 }
 
 module.exports = {
