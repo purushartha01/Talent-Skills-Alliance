@@ -1,10 +1,14 @@
+import { RouterProvider } from "react-router-dom"
 import { logStatements } from "./utilities/utilityMethods"
+import useMyRouter from "./hooks/useRouter"
 
 function App() {
 
+  const router = useMyRouter();
+
   return (
     <>
-    <div>{logStatements("First statement!")}</div>
+      <RouterProvider router={router} />
     </>
   )
 }

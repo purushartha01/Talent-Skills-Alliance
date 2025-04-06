@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+:root {
+}
+
+@layer base {
+  /* Contains the base styles configuration for different html elements */
+}
+
+@layer components {
+  /* Contains custom styles for different user-defined components */
+}
