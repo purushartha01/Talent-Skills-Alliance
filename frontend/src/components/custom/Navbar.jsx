@@ -69,8 +69,11 @@ const Navbar = () => {
           <DrawerTrigger className={"h-full w-1/10 flex items-center justify-center"}>
             <MenuIcon />
           </DrawerTrigger>
-          <span className="text-xl font-bold text-center w-9/10 font-[Lobster]">
-            Talent&Skills Alliance
+          <span className="hidden xs:block  text-xl font-bold text-center w-9/10 font-[Lobster]">
+            Talent & Skills Alliance
+          </span>
+          <span className="block xs:hidden text-xl font-bold text-center w-9/10 font-[Lobster]">
+            TSA
           </span>
         </DrawerHeader>
         <DrawerContent className={"h-screen px-4 py-2 w-1/4"}>
@@ -82,7 +85,8 @@ const Navbar = () => {
               </DrawerClose>
             </DrawerTitle>
           </DrawerHeader>
-          <DrawerDescription className={"flex flex-col items-center h-[80vh]"}>
+          <DrawerDescription></DrawerDescription>
+          <div className={"flex flex-col items-center h-[80vh]"}>
             <ul className="w-full flex flex-col justify-center">
               {links.map((link, index) => {
                 return (
@@ -94,7 +98,7 @@ const Navbar = () => {
                 )
               })}
             </ul>
-          </DrawerDescription>
+          </div>
           <DrawerFooter className={"flex flex-row items-center h-[10vh]"}>
             <Link to="/login" onClick={closeDrawer}>
               Login

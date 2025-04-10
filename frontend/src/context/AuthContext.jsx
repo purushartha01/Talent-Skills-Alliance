@@ -14,7 +14,9 @@ export const AuthProvider = ({ children }) => {
         setAuth(authVal)
     }
 
-    return <AuthContext.Provider value={{ getCurrAuth, setCurrAuth }}>
+    return(
+    <AuthContext.Provider value={{ getCurrAuth, setCurrAuth }}>
         {children}
     </AuthContext.Provider>
+    );
 }
