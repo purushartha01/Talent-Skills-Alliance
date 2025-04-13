@@ -42,7 +42,7 @@ const Navbar = () => {
 
   return (
     isLargeScreen ?
-      <div className="h-[10vh] w-full flex flex-row items-center justify-evenly shadow-lg sticky top-0 z-50">
+      <div className="h-[10vh] w-full flex flex-row items-center justify-evenly shadow-lg sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="h-full w-1/10 flex items-center justify-center">
           <a className="btn btn-ghost normal-case text-xl font-[Lobster]">TSA</a>
         </div>
