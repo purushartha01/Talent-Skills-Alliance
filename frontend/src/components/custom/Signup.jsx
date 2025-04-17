@@ -1,20 +1,26 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form"
 import { z } from "zod"
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod/src/zod"
 import { EyeClosedIcon, EyeIcon } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../ui/button"
+import CustomTooltip from "./CustomTooltip"
+import { logStatements } from "@/utilities/utilityMethods"
+import OTPComponent from "./OTPComponent"
+import { serverAxiosInstance } from "@/utilities/config"
+import { AuthContext } from "@/context/AuthContext"
 
 const Signup = () => {
 
-  const [isOtpSent, setIsOtpSent] = useState(false)
-  const [otp, setOtp] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   }
@@ -23,12 +29,17 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword);
   }
 
+
+  const navigate = useNavigate();
+  const { setCurrAuth } = useContext(AuthContext);
+
+
   const signupFormSchema = z.object({
-    name: z.string().min(2, { message: "Name is required" }),
+    username: z.string().min(2, { message: "Name is required" }),
     email: z.string().email({ message: "Invalid email address" }),
     password: z
       .string()
-      .min(6, { message: "Password must be at least 8 characters long" })
+      .min(8, { message: "Password must be at least 8 characters long" })
       .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/, { message: "Password must have atleast(1 Uppercase, 1 Lowercase, 1 number and 1 special symbol)" }),
     confirmPassword: z.string()
   }).refine((data) => data.password === data.confirmPassword, {
@@ -36,27 +47,46 @@ const Signup = () => {
     path: ["confirmPassword"],
   });
 
-
   const form = useForm({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
-      name: "",
+      username: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
-    mode: "onBlur",
+    mode: "onChange",
   });
 
 
   const onSubmit = (data) => {
-    console.log(data);
+    const { username, email, password } = data;
+    serverAxiosInstance.post("/auth/register", { username, email, password }).then((res) => {
+      if (res.status === 200) {
+        toast.success("Signup successful", {
+          description: "You have successfully signed up",
+        });
+        navigate("/profile");
+      }
+
+    }).catch((err) => {
+      toast.error("Signup failed", {
+        description: err.response.data.error,
+        cancelable: true,
+      });
+    })
+    form.reset();
   }
 
+  const email = form.watch("email");
+  const emailSchema = z.string().email({ message: "Invalid email address" })
+  const isEmailValid = emailSchema.safeParse(email).success;
 
+  useEffect(() => { setIsEmailVerified(false) }, [email])
 
   return (
     <div className="h-[90vh] w-full flex flex-col items-center justify-center">
-      <Card className="w-9/10 h-9/10 sm:w-2/3 md:w-2/5 flex flex-col items-center justify-center shadow-lg">
+      <Card className="w-9/10 h-9/10 sm:w-2/3 md:w-3/7 flex flex-col items-center justify-center shadow-lg">
         <CardHeader className="w-full h-1/5 flex flex-col items-center justify-center">
           <CardTitle className="text-2xl font-bold">Signup</CardTitle>
           <CardDescription className="text-gray-500 hidden">Please enter your credentials</CardDescription>
@@ -72,9 +102,12 @@ const Signup = () => {
                 });
               })
             })} className="w-full h-full flex flex-col items-center justify-center">
-              <FormField control={form.control} name="name" render={({ field }) => (
+              <FormField control={form.control} name="username" render={({ field }) => (
                 <FormItem className="w-full flex flex-col justify-center mb-4">
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>
+                    Username
+                    <CustomTooltip tipContent={["Ex: johndoe123"]} />
+                  </FormLabel>
                   <FormControl>
                     <input {...field} type="text" placeholder="Enter your preferred username" className="border rounded-md p-2 w-full" />
                   </FormControl>
@@ -83,53 +116,36 @@ const Signup = () => {
 
               <FormField control={form.control} name="email" render={({ field }) => (
                 <FormItem className="w-full flex flex-col justify-center mb-4">
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>
+                    Email
+                    <CustomTooltip tipContent={["Ex: johndoe@example.com"]} />
+                  </FormLabel>
                   <FormControl>
-                    <input {...field} type="email" placeholder="Enter your email" className="border rounded-md p-2 w-full" />
-                  </FormControl>
-                </FormItem>
-              )} />
-
-              {/* TODO: Adjust OTP-based email verification functionality at signup of new user*/}
-
-
-              <FormField control={form.control} name="otp" render={({ field }) => (
-                <FormItem className="w-full flex flex-col justify-center mb-4">
-                  <FormLabel>OTP</FormLabel>
-                  <FormControl>
-                    <div className="w-full flex flex-row items-center justify-between">
-                      <input
-                        {...field}
-                        type="text"
-                        placeholder="Enter the OTP sent to your email"
-                        className="border rounded-md p-2 w-full"
-                        disabled={!isOtpSent} // Disable input if OTP is not sent
-                      />
-                      <Button
-                        type="button"
-                        className="ml-2 bg-blue-500 text-white hover:bg-blue-600"
-                        onClick={() => {
-                          // Logic to send OTP to the user's email
-                          toast.success("OTP sent to your email!");
-                          isOtpSent ? setIsOtpSent(false) : setIsOtpSent(true);
-                        }}
-                      >
-                        {isOtpSent ? "Resend OTP" : "Send OTP"}
-                      </Button>
+                    <div className="relative w-full flex flex-col items-center justify-center">
+                      <input {...field} type="email" placeholder="Enter your email" className="border rounded-md p-2 w-full pr-29" />
+                      <OTPComponent emailToVerify={email} isEmailValid={isEmailValid} onEmailVerification={() => { setIsEmailVerified(true) }} isEmailVerified={isEmailVerified} />
                     </div>
                   </FormControl>
                 </FormItem>
               )} />
 
 
+
+              {/* TODO: Adjust OTP-based into a modal*/}
+
+
+
               <FormField control={form.control} name="password" render={({ field }) => (
                 <FormItem className="w-full flex flex-col justify-center mb-4">
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>
+                    Password
+                    <CustomTooltip tipContent={["Password must have minimum 8 characters", "Password must have atleast(1 Uppercase, 1 Lowercase, 1 number and 1 special symbol) "]} />
+                  </FormLabel>
                   <FormControl>
-                    <div className="w-full flex flex-row items-center justify-between">
+                    <div className="relative w-full flex flex-row items-center justify-between">
 
                       <input {...field} type={showPassword ? "text" : "password"} placeholder="Enter your password" className="border rounded-md p-2 w-full" />
-                      <div className="w-2/10 h-full flex flex-row  items-center justify-center mb-4" onClick={togglePasswordVisibility}>
+                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={togglePasswordVisibility}>
                         {showPassword ?
                           <EyeIcon className="cursor-pointer" />
                           :
@@ -141,12 +157,15 @@ const Signup = () => {
                 </FormItem>
               )} />
               <FormField control={form.control} name="confirmPassword" render={({ field }) => (
-                <FormItem className="w-full flex flex-col justify-center mb-4">
-                  <FormLabel>Confirm Password</FormLabel>
+                <FormItem className="w-full flex flex-col justify-center mb-4 ">
+                  <FormLabel>
+                    Confirm Password
+                    <CustomTooltip tipContent={["Must match the Password field!"]} />
+                  </FormLabel>
                   <FormControl>
-                    <div className="w-full flex flex-row items-center justify-between">
-                      <input {...field} type={showConfirmPassword ? "text" : "password"} placeholder="Confirm your password" className="border rounded-md p-2 w-full" />
-                      <div className="w-2/10 h-full flex flex-row  items-center justify-center mb-4" onClick={toggleConfirmPasswordVisibility}>
+                    <div className="relative w-full flex flex-row items-center justify-between">
+                      <input {...field} type={showConfirmPassword ? "text" : "password"} placeholder="Confirm your password" className="border rounded-md p-2 w-full" name="confirmPassword" />
+                      <div className="absolute right-1 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={toggleConfirmPasswordVisibility}>
                         {showConfirmPassword ?
                           <EyeIcon className="cursor-pointer" />
                           :
@@ -157,7 +176,7 @@ const Signup = () => {
                   </FormControl>
                 </FormItem>
               )} />
-              <Button type="submit" className="w-3/4 bg-blue-500 text-white hover:bg-blue-600">Signup</Button>
+              <Button type="submit" disabled={!form.formState.isValid || !isEmailVerified} className="w-3/4 mb-2">Signup</Button>
             </form>
           </Form>
         </CardContent>

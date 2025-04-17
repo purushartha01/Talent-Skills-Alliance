@@ -11,12 +11,12 @@ export const AuthProvider = ({ children }) => {
 
     const setCurrAuth = (authVal) => {
         localStorage.setItem("TSAUser", JSON.stringify(authVal));
+        // console.log("Auth Value", authVal);
         setAuth(authVal)
     }
-
-    return(
-    <AuthContext.Provider value={{ getCurrAuth, setCurrAuth }}>
-        {children}
-    </AuthContext.Provider>
+    return (
+        <AuthContext.Provider value={{ getCurrAuth, setCurrAuth }}>
+            {children}
+        </AuthContext.Provider>
     );
 }

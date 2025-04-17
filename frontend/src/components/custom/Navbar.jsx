@@ -28,17 +28,10 @@ const Navbar = () => {
     {
       to: "/",
       text: "Home",
-    },
-    {
-      to: "/explore",
-      text: "Explore",
-    },
-    {
-      to: "/contact",
-      text: "Contact",
     }
   ];
 
+  console.log("Non Auth Navbar Rendered");
 
   return (
     isLargeScreen ?
@@ -90,19 +83,24 @@ const Navbar = () => {
             <ul className="w-full flex flex-col justify-center">
               {links.map((link, index) => {
                 return (
-                  <li key={index} className="w-full h-1/4">
+                  <li key={index} className="w-full h-1/4 mb-2">
                     <Link to={link.to} className="w-full flex items-center p-2 hover:bg-gray-200 rounded-md text-xl" onClick={closeDrawer}>
                       {link.text}
                     </Link>
                   </li>
                 )
               })}
+              <li className="w-full h-1/4 mb-2">
+                <Link to="/login" className="w-full flex items-center p-2 hover:bg-gray-200 rounded-md text-xl" onClick={closeDrawer}>
+                  Login
+                </Link>
+              </li>
             </ul>
           </div>
           <DrawerFooter className={"flex flex-row items-center h-[10vh]"}>
-            <Link to="/login" onClick={closeDrawer}>
-              Login
-            </Link>
+            <div className="w-full h-full flex items-center justify-center">
+              <a className="btn btn-ghost normal-case text-xl font-[Lobster]">TSA</a>
+            </div>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

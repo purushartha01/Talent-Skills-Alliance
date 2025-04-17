@@ -64,17 +64,19 @@ const signupActionHandler = async (req, res, next) => {
             throw new Error("User already exists");
         }
         const newUser = await createNewUser(username, email, password);
-        let otpFound = await OTPModel.exists({ email });
-        let isOTPCreated = undefined;
-        if (!otpFound) {
-            const otp = await generateUniqueOTP();
-            console.log("OTP generated: ", otp);
-            isOTPCreated = (await OTPModel.create({ email, otp })).save();
-        }
+
+        // let otpFound = await OTPModel.exists({ email });
+        // let isOTPCreated = undefined;
+        // if (!otpFound) {
+        //     const otp = await generateUniqueOTP();
+        //     console.log("OTP generated: ", otp);
+        //     isOTPCreated = (await OTPModel.create({ email, otp })).save();
+        // }
+
         console.log("Boolean user created: ", newUser);
-        if (newUser && isOTPCreated) {
+        if (newUser) {
             await sendWelcomeMail(username, email);
-            res.status(200).json({ status: 'success', message: "Registration successfully completed!" })
+            res.status(200).json({ status: 'success', message: "Registration successfully completed!", userData: { username, email } })
         } else {
             res.locals.statusCode = 500;
             throw new Error("Failed to create new user");
@@ -93,15 +95,23 @@ const generateOTP = async (req, res, next) => {
         }
 
         const { email } = req.body;
+        console.log("Email: ", email);
 
-        let otpFound = await OTPModel.exists({ email });
+        const doesUserExist = await userExists(email);
+        console.log(`DoesUserExist: ${doesUserExist}`);
+        if (doesUserExist) {
+            res.locals.statusCode = 409;
+            throw new Error("User already exists");
+        }
+
+        let otpFound = await OTPModel.findOne({ email });
         if (!otpFound) {
             const otp = await generateUniqueOTP();
             console.log('OTP: ', otp);
             otpFound = await OTPModel.create({ email, otp });
         }
         if (otpFound) {
-            res.status(200).json({ status: 'success', message: 'OTP sent!' });
+            res.status(200).json({ status: 'success', message: 'OTP sent!', expiresIn: ((otpFound.createdAt.getTime()) + 5 * 60 * 1000) });
         }
     } catch (err) {
         console.log(err);
@@ -131,17 +141,16 @@ const handleOTPVerification = async (req, res, next) => {
         }
 
         if (foundOTP[0].otp === otp) {
-            const updatedUser = await updateUserByEmail({ email }, { isActivated: true }, { new: true });
-            if(!updatedUser){
-                res.locals.statusCode=500;
-                throw new Error("Could not update user");
-            }
+            // const updatedUser = await updateUserByEmail({ email }, { isActivated: true }, { new: true });
+            // if (!updatedUser) {
+            //     res.locals.statusCode = 500;
+            //     throw new Error("Could not update user");
+            // }
             res.status(200).json({ status: 'success', message: 'OTP verified' })
         } else {
             res.locals.statusCode = 401;
             throw new Error("Wrong OTP");
         }
-
     } catch (err) {
         console.log(err);
         next(err);
