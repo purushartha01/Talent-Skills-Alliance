@@ -8,6 +8,7 @@ import { useContext } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import NotFound from '@/pages/NotFound';
 import UserProfile from '@/pages/UserProfile';
+import Settings from '@/pages/Settings';
 
 
 const useMyRouter = () => {
@@ -42,6 +43,9 @@ const useMyRouter = () => {
                 {
                     path: '/user/profile',
                     element: <UserProfile />,
+                },{
+                    path: '/user/settings',
+                    element: <Settings />,
                 }
             ]
         }
@@ -52,7 +56,7 @@ const useMyRouter = () => {
     //TODO: Add conditional rendering for protected routes based on authentication status
     const finalRoutes = [{
         element: <PageLayout />,
-        children: [...routes, ...(Object.keys(getCurrAuth).length > 0 ? ([...protectedRoutes]) : ([]))],
+        children: [...routes, ...(Object.keys(getCurrAuth()).length > 0 ? ([...protectedRoutes]) : ([]))],
     }]
 
     // console.log("Auth Value", getCurrAuth());

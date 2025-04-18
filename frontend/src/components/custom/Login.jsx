@@ -9,21 +9,26 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { EyeClosedIcon, EyeIcon, Info } from "lucide-react";
-import { useState } from "react";
-import { z } from "zod";
+import { useContext, useState } from "react";
+import { set, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from './../../../node_modules/@hookform/resolvers/zod/src/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CustomTooltip from "./CustomTooltip";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { serverAxiosInstance } from "@/utilities/config";
 import { logStatements } from "@/utilities/utilityMethods";
+import { AuthContext } from "@/context/AuthContext";
 
 
 
 const Login = () => {
+
+  const { setCurrAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const formSchema = z.object({
     email: z.string().email({ message: 'Invalid email address' }),
     password: z
@@ -41,6 +46,7 @@ const Login = () => {
     mode: "onChange",
   });
 
+
   const onSubmit = (data) => {
     logStatements("Login Data", data);
     serverAxiosInstance.post("/auth/login", data)
@@ -49,9 +55,11 @@ const Login = () => {
         toast.success("Login successful", {
           description: "You have successfully logged in",
         });
+        setCurrAuth(res.data.user);
+        navigate("/")
       })
       .catch((err) => {
-        logStatements("Login Error", err.response.data.error);
+        // logStatements("Login Error", err.response.data.error);
         toast.error("Login failed", {
           description: err.response.data.error,
           cancelable: true,

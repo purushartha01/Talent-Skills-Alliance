@@ -76,7 +76,7 @@ const signupActionHandler = async (req, res, next) => {
         console.log("Boolean user created: ", newUser);
         if (newUser) {
             await sendWelcomeMail(username, email);
-            res.status(200).json({ status: 'success', message: "Registration successfully completed!", userData: { username, email } })
+            res.status(200).json({ status: 'success', message: "Registration successfully completed!", userData: { username, email, id: newUser.id } })
         } else {
             res.locals.statusCode = 500;
             throw new Error("Failed to create new user");

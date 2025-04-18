@@ -21,36 +21,36 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
 
     const handleSendOtp = async () => {
         // Simulate sending OTP
-        const res = await serverAxiosInstance.post("/auth/generate", { email: emailToVerify });
-        logStatements(res);
-        if (res.status === 200) {
-            // logStatements(res.data);
-            setIsOtpSent(true);
-            setExpiresIn(res.data.expiresIn);
-            toast.success("OTP sent successfully", {
-                description: "Please check your email for the OTP",
-                duration: 5000,
-                action: {
-                    label: "OK",
-                    onClick: () => {
-                        toast.dismiss()
+        const res = await serverAxiosInstance.post("/auth/generate", { email: emailToVerify }).then((res) => {
+            if (res.status === 200) {
+                // logStatements(res.data);
+                setIsOtpSent(true);
+                setExpiresIn(res.data.expiresIn);
+                toast.success("OTP sent successfully", {
+                    description: "Please check your email for the OTP",
+                    duration: 5000,
+                    action: {
+                        label: "OK",
+                        onClick: () => {
+                            toast.dismiss()
+                        },
                     },
-                },
-            })
-
-        } else {
+                })
+            }
+        }).catch((res) => {
             toast.error("Failed to send OTP", {
                 description: res.response.data.error,
                 duration: 5000,
                 action: {
-                    label: "OK",
+                    label: "X",
                     onClick: () => {
                         toast.dismiss()
                     },
                 },
             })
+            setIsOtpSent(true);
         }
-        setIsOtpSent(true);
+        );
     }
 
     const handleVerifyOtp = async () => {
@@ -76,7 +76,7 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
                 description: err.response.data.error,
                 duration: 5000,
                 action: {
-                    label: "OK",
+                    label: "X",
                     onClick: () => {
                         toast.dismiss()
                     },

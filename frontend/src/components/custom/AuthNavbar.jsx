@@ -10,9 +10,14 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer"
-import { MenuIcon, SidebarCloseIcon } from "lucide-react";
+import { Bell, Folder, LogOut, MenuIcon, MessageSquare, Settings, SidebarCloseIcon, UnfoldVerticalIcon, User } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { AuthContext } from "@/context/AuthContext";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 
 
 
@@ -23,6 +28,7 @@ const AuthNavbar = () => {
     const isLargeScreen = useMediaQuery('(min-width: 768px)');
     const [isOpen, setIsOpen] = useState(false);
     const closeDrawer = () => setIsOpen(false);
+    const user = useContext(AuthContext).getCurrAuth();
 
     const links = [
         {
@@ -32,7 +38,7 @@ const AuthNavbar = () => {
         {
             to: "/explore",
             text: "Explore",
-        },
+        }
     ];
 
     console.log("Auth Navbar Rendered");
@@ -56,9 +62,71 @@ const AuthNavbar = () => {
                         })}
                     </ul>
                 </div>
-                <div className="h-full w-1/10 flex items-center justify-center px-2">
+                {/* <div className="h-full w-1/10 flex items-center justify-center px-2">
                     <Link to="/login" className="w-full flex items-center justify-center p-2 hover:bg-gray-200 rounded-md text-xl">Login</Link>
+                </div> */}
+
+
+                <div className="flex items-center gap-2 md:gap-4">
+                    {/* <Button variant="ghost" size="icon" className="relative md:flex">
+                        <Bell className="h-5 w-5" />
+                        <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary"></span>
+                        <span className="sr-only">Notifications</span>
+                    </Button>
+                    <Button variant="ghost" size="icon" className="hidden md:flex">
+                        <MessageSquare className="h-5 w-5" />
+                        <span className="sr-only">Messages</span>
+                    </Button> */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                                <Avatar className="h-8 w-8">
+                                    <AvatarImage src={user?.avatar || "https://cdn.vectorstock.com/i/2000v/28/66/profile-placeholder-image-gray-silhouette-vector-21542866.avif"} alt={user.username} />
+                                    <AvatarFallback>JD</AvatarFallback>
+                                </Avatar>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56" align="end" forceMount>
+                            <DropdownMenuLabel className="font-normal">
+                                <div className="flex flex-col space-y-1">
+                                    <p className="text-sm font-medium leading-none">{user.username}</p>
+                                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                                </div>
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem asChild>
+                                    <Link to="/user/profile">
+                                        <User className="mr-2 h-4 w-4" />
+                                        <span>Profile</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link to="/user/teams">
+                                        <Folder className="mr-2 h-4 w-4" />
+                                        <span>My Teams</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                    <Link to="/user/settings">
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        <span>Settings</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <LogOut className="mr-2 h-4 w-4" />
+                                <span>Log out</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
+
+
+
+
+
             </div>
             :
             <Drawer direction="left" open={isOpen} onOpenChange={setIsOpen}>
@@ -94,16 +162,43 @@ const AuthNavbar = () => {
                                     </li>
                                 )
                             })}
-                            <li className="w-full h-1/4 mb-2">
-                                <Link to="/login" className="w-full flex items-center p-2 hover:bg-gray-200 rounded-md text-xl" onClick={closeDrawer}>
-                                    Login
-                                </Link>
-                            </li>
                         </ul>
                     </div>
-                    <DrawerFooter className={"flex flex-row items-center h-[10vh]"}>
-                        <div className="w-full h-full flex items-center justify-center">
-                            <a className="btn btn-ghost normal-case text-xl font-[Lobster]">TSA</a>
+                    <DrawerFooter className={"flex flex-row items-center"}>
+                        <div className="w-full h-full flex items-center">
+                            <Accordion className="w-full" type="single" collapsible>
+                                <AccordionItem value="user-menu">
+                                    <AccordionTrigger className="w-full flex flex-row items-center justify-evenly">
+                                        <Avatar className="h-8 w-8">
+                                            <AvatarImage src={user?.avatar || "https://cdn.vectorstock.com/i/2000v/28/66/profile-placeholder-image-gray-silhouette-vector-21542866.avif"} alt={user.username} />
+                                            <AvatarFallback>JD</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex flex-col space-y-1 w-full overflow-hidden">
+                                            <p className="text-sm font-medium leading-none">{user.username}</p>
+                                            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent className={"mb-4 pl-8 font-semibold"}>
+                                        <Link to="/user/profile" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
+                                            <User className="mr-2 h-4 w-4" />
+                                            <span>Profile</span>
+                                        </Link>
+                                        <Link to="/user/teams" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
+                                            <Folder className="mr-2 h-4 w-4" />
+                                            <span>My Teams</span>
+                                        </Link>
+                                        <Link to="/user/settings" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
+                                            <Settings className="mr-2 h-4 w-4" />
+                                            <span>Settings</span>
+                                        </Link>
+                                        {/* TODO: Add user logout functionality */}
+                                        <Link to="#" className="flex flex-row items-center mb-2 text-destructive/100 hover:bg-gray-300" onClick={closeDrawer}>
+                                            <LogOut className="mr-2 h-4 w-4" />
+                                            <span>Log out</span>
+                                        </Link>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
                         </div>
                     </DrawerFooter>
                 </DrawerContent>

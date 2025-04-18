@@ -21,6 +21,8 @@ const Signup = () => {
 
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   }
@@ -66,7 +68,9 @@ const Signup = () => {
         toast.success("Signup successful", {
           description: "You have successfully signed up",
         });
-        navigate("/profile");
+        form.reset();
+        setCurrAuth(res.data.userData);
+        navigate("/user/profile");
       }
 
     }).catch((err) => {
@@ -74,8 +78,8 @@ const Signup = () => {
         description: err.response.data.error,
         cancelable: true,
       });
+      form.reset();
     })
-    form.reset();
   }
 
   const email = form.watch("email");
