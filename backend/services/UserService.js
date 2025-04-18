@@ -20,7 +20,7 @@ const findAllUsers = async () => {
 }
 
 const userExists = async (email) => {
-    const user = await UserModel.findOne({ email: email });
+    const user = await UserModel.findOne({ email: email }).populate;
     return user;
 }
 

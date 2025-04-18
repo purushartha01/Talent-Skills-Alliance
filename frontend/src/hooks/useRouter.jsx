@@ -9,6 +9,7 @@ import { AuthContext } from '@/context/AuthContext';
 import NotFound from '@/pages/NotFound';
 import UserProfile from '@/pages/UserProfile';
 import Settings from '@/pages/Settings';
+import UserTeams from '@/pages/UserTeams';
 
 
 const useMyRouter = () => {
@@ -43,9 +44,13 @@ const useMyRouter = () => {
                 {
                     path: '/user/profile',
                     element: <UserProfile />,
-                },{
+                }, {
                     path: '/user/settings',
                     element: <Settings />,
+                },
+                {
+                    path: '/user/teams',
+                    element: <UserTeams />
                 }
             ]
         }
