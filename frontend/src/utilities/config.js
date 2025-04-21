@@ -19,27 +19,19 @@ serverAxiosInstance.interceptors.response.use(
     (error) => {
         console.error("Error in response interceptor:", error);
         if (error.response) {
-            switch (error.response.status) {
-                case 401: // Unauthorized
-                    if (error.response.data.error === "Token expired!") {
-                        toast.error("Session expired, please login again..", {
-                            description: error.response.data.message || "An unexpected error occurred.",
-                            duration: 3000,
-                        });
-                        localStorage.removeItem("TSAUser")
-                        window.location.href = "/login";
-                    }
-                    break;
-                default:
-                    toast.error("An unexpected error occurred.", {
+            if (error.response.status === 401) {
+                if (error.response.data.error === "Token expired!") {
+                    toast.error("Session expired, please login again..", {
                         description: error.response.data.message || "An unexpected error occurred.",
                         duration: 3000,
                     });
-                    break;
+                    localStorage.removeItem("TSAUser")
+                    window.location.href = "/login";
+                }
 
             }
-            return Promise.reject(error.response.data.message || "An unexpected error occurred.");
         }
+        return Promise.reject(error);
     }
 );
 

@@ -59,9 +59,9 @@ const Login = () => {
         navigate("/")
       })
       .catch((err) => {
-        // logStatements("Login Error", err.response.data.error);
+        logStatements("Login Error", err);
         toast.error("Login failed", {
-          description: err.response.data.error,
+          description: err.response?.data?.error,
           cancelable: true,
         });
       })
