@@ -13,7 +13,7 @@ const PageLayout = () => {
     return (
         <div className='flex flex-col min-h-screen'>
             {Object.keys(getCurrAuth()).length === 0 ? < Navbar /> : <AuthNavbar />}
-            <div className='flex-grow'>
+            <div className='flex flex-grow'>
                 <Outlet />
             </div>
             <Footer />

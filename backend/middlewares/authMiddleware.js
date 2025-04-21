@@ -13,7 +13,7 @@ const authMiddleware = async (req, res, next) => {
             throw new jwt.TokenExpiredError;
         }
         const accessData = jwt.verify(AccessToken, ACCESS_KEY);
-        console.log(`AccessData: `, accessData);
+        // console.log(`AccessData: `, accessData);
         const doesUserExist = await UserModel.findById(accessData.id);
         if (doesUserExist) {
             req.currUserId = doesUserExist.id;

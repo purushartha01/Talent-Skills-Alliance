@@ -14,7 +14,6 @@ const ProposalSchema = new mongoose.Schema({
     proposalDescription: {
         type: String,
         required: true,
-        minLength: 50
     },
     applicants: [
         {
@@ -23,19 +22,31 @@ const ProposalSchema = new mongoose.Schema({
         }
     ],
     skillsRequired: [{
-        type: String,
-        required: true
+        skill:{
+            type: String,
+            required: true,
+        },
+        level:{
+            type: String,
+            default: 'Beginner'
+        }
     }],
-    memberEducationalRequirements: [{
+    lookingFor: [{
         type: String,
+        required: true,
     }],
-    memberProfessionRequirements: {
-        type: String,
-    },
     applicationDeadline: {
         type: Date,
         required: true,
-    }
+    },
+    timeCommitment: {
+        type: String,
+        required: true,
+    },
+    duration: {
+        type: String,
+        required: true,
+    },
 }, {
     timestamps: true
 })

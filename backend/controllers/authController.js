@@ -27,10 +27,6 @@ const loginActionHandler = async (req, res, next) => {
             res.locals.statusCode = 401;
             throw new Error("Incorrect Password or username");
         }
-        if (!doesUserExist.isActivated) {
-            res.locals.statusCode = 403;
-            throw new Error("Account is not yet activated!");
-        }
 
         const sensitiveData = ['password', 'createdAt', 'updatedAt', '__v'];
         const user = Object.fromEntries(

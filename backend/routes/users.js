@@ -17,9 +17,21 @@ userRouter.route('/remove/:userID')
 userRouter.route('/proposals')
     .get(userController.getAllProposals);
 
+
+
+userRouter.route('/proposal/save').post(userController.saveProposal);
+
+userRouter.route('/proposal/unsave').post(userController.unsaveProposal);
+
+userRouter.route('/proposal/apply').post(userController.applyProposal);
+
+
+
+
+userRouter.route('/proposal/new').post(userController.createProposal);
+
 userRouter.route('/proposal/:proposalID')
     .get(userController.getProposal)
-    .post(userController.createProposal)
     .put(userController.updateProposal)
     .delete(userController.deleteProposal);
 

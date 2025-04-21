@@ -78,7 +78,7 @@ const AuthNavbar = () => {
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={user?.avatar || "https://cdn.vectorstock.com/i/2000v/28/66/profile-placeholder-image-gray-silhouette-vector-21542866.avif"} alt={user.username} />
+                                    <AvatarImage src={user?.about?.profileImg || "https://cdn.vectorstock.com/i/2000v/28/66/profile-placeholder-image-gray-silhouette-vector-21542866.avif"} alt={user?.username} />
                                     <AvatarFallback>JD</AvatarFallback>
                                 </Avatar>
                             </Button>
@@ -86,8 +86,8 @@ const AuthNavbar = () => {
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                             <DropdownMenuLabel className="font-normal">
                                 <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">{user.username}</p>
-                                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                                    <p className="text-sm font-medium leading-none">{user?.username}</p>
+                                    <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />

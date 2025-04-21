@@ -46,7 +46,7 @@ const SkillSuggestionInput = ({ value, onChange, onSelect, skillsList = [], disa
         } else if (e.key === "ArrowUp") {
             e.preventDefault();
             setActiveIndex((prev) => Math.max(prev - 1, 0));
-        } 
+        }
         else if (e.key === "Enter") {
             e.preventDefault();
             if (activeIndex >= 0 && suggestedSkills[activeIndex] !== "No suggestions available") {

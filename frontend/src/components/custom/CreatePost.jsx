@@ -1,30 +1,43 @@
 
-import { useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { X, Plus } from "lucide-react"
+import { X, Plus, Calendar1, Loader2, Loader } from "lucide-react"
+import SkillSuggestionInput from "./SkillSuggestionInput"
+import { returnSkillsList } from "@/utilities/utilityMethods"
+import { Calendar } from "../ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { AuthContext } from "@/context/AuthContext"
+import { set } from "date-fns"
+import { serverAxiosInstance } from "@/utilities/config"
+import { toast } from "sonner"
 
-/**
- * CreatePostForm Component
- *
- * Form for creating a new project post with fields for title, description,
- * required skills, team roles, and project duration.
- *
- * @param {Object} props - Component props
- * @param {Function} props.onSubmit - Function to call when form is submitted
- */
-export default function CreatePost({ onSubmit }) {
+
+
+const CreatePost = ({ onSubmit, shouldParentUpdate }) => {
+
+  const skillsList = useMemo(() => returnSkillsList(), []);
+
+  const auth = useContext(AuthContext).getCurrAuth();
+
+  const currUserId = auth.id ?? auth._id;
+
+  const [isOpen, setIsOpen] = useState(false)
+
+  const [isLoading, setIsLoading] = useState(false)
+
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    requirements: [],
+    proposalTitle: "",
+    proposalDescription: "",
+    skillsRequired: [],
     lookingFor: [],
     timeCommitment: "",
     duration: "",
+    applicationDeadline: new Date(),
   })
 
   const [newSkill, setNewSkill] = useState({ skill: "", level: "Beginner" })
@@ -39,7 +52,7 @@ export default function CreatePost({ onSubmit }) {
     if (newSkill.skill.trim()) {
       setFormData((prev) => ({
         ...prev,
-        requirements: [...prev.requirements, { ...newSkill }],
+        skillsRequired: [...prev.skillsRequired, { ...newSkill }],
       }))
       setNewSkill({ skill: "", level: "Beginner" })
     }
@@ -48,7 +61,7 @@ export default function CreatePost({ onSubmit }) {
   const removeSkill = (index) => {
     setFormData((prev) => ({
       ...prev,
-      requirements: prev.requirements.filter((_, i) => i !== index),
+      skillsRequired: prev.skillsRequired.filter((_, i) => i !== index),
     }))
   }
 
@@ -69,34 +82,69 @@ export default function CreatePost({ onSubmit }) {
     }))
   }
 
+
   const handleSubmit = (e) => {
+    setIsLoading(true)
+    formData.author = currUserId;
+
     e.preventDefault()
-    onSubmit(formData)
+    console.log("Form submitted:", formData)
+
+    serverAxiosInstance.post("/user/proposal/new", { formData })
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success("Proposal created successfully", {
+            description: "Your proposal has been created.",
+            duration: 5000,
+          })
+          setFormData({
+            proposalTitle: "",
+            proposalDescription: "",
+            skillsRequired: [],
+            lookingFor: [],
+            timeCommitment: "",
+            duration: "",
+            applicationDeadline: new Date(),
+          })
+          shouldParentUpdate(true)
+        }
+      })
+      .catch((err) => {
+        toast.error("Error creating proposal: " + err.message,
+          {
+            description: "Please try again later.",
+            duration: 5000,
+          })
+      }).finally(() => {
+        setIsLoading(false)
+      });
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="title">Project Title</Label>
+        <Label htmlFor="proposalTitle">Proposal Title</Label>
         <Input
-          id="title"
-          name="title"
+          id="proposalTitle"
+          name="proposalTitle"
           placeholder="Enter a clear, descriptive title"
-          value={formData.title}
+          value={formData.proposalTitle}
           onChange={handleChange}
           required
+          disabled={isLoading}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Project Description</Label>
+        <Label htmlFor="proposalDescription">Proposal Description</Label>
         <Textarea
-          id="description"
-          name="description"
+          id="proposalDescription"
+          name="proposalDescription"
           placeholder="Describe your project idea, goals, and vision"
           rows={5}
-          value={formData.description}
+          value={formData.proposalDescription}
           onChange={handleChange}
+          disabled={isLoading}
           required
         />
       </div>
@@ -104,13 +152,22 @@ export default function CreatePost({ onSubmit }) {
       <div className="space-y-2">
         <Label>Required Skills</Label>
         <div className="flex gap-2">
-          <Input
-            placeholder="Add a skill"
+
+
+          <SkillSuggestionInput
             value={newSkill.skill}
-            onChange={(e) => setNewSkill({ ...newSkill, skill: e.target.value })}
-            className="flex-1"
+            onChange={(val) => setNewSkill({ ...newSkill, skill: val })}
+            skillsList={skillsList}
+            onSelect={(skill) => setNewSkill({ ...newSkill, skill })}
+            disabled={isLoading}
           />
-          <Select value={newSkill.level} onValueChange={(value) => setNewSkill({ ...newSkill, level: value })}>
+
+
+          <Select
+            value={newSkill.level}
+            onValueChange={(value) => setNewSkill({ ...newSkill, level: value })}
+            disabled={isLoading}
+          >
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Level" />
             </SelectTrigger>
@@ -125,8 +182,8 @@ export default function CreatePost({ onSubmit }) {
           </Button>
         </div>
         <div className="flex flex-wrap gap-2 mt-2">
-          {formData.requirements.map((req, index) => (
-            <Badge key={index} variant="secondary" className="flex items-center gap-1">
+          {formData.skillsRequired.map((req, index) => (
+            <Badge key={index} variant="secondary" className="flex items-center gap-1 capitalize">
               {req.skill} • {req.level}
               <button
                 type="button"
@@ -149,8 +206,9 @@ export default function CreatePost({ onSubmit }) {
             value={newRole}
             onChange={(e) => setNewRole(e.target.value)}
             className="flex-1"
+            disabled={isLoading}
           />
-          <Button type="button" onClick={addRole} size="sm">
+          <Button type="button" onClick={addRole} size="sm" disabled={isLoading}>
             <Plus className="h-4 w-4" />
           </Button>
         </div>
@@ -175,6 +233,7 @@ export default function CreatePost({ onSubmit }) {
         <div className="space-y-2">
           <Label htmlFor="timeCommitment">Time Commitment</Label>
           <Select
+            disabled={isLoading}
             value={formData.timeCommitment}
             onValueChange={(value) => setFormData({ ...formData, timeCommitment: value })}
             required
@@ -193,14 +252,15 @@ export default function CreatePost({ onSubmit }) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="duration">Project Duration</Label>
+          <Label htmlFor="duration">Proposal Duration</Label>
           <Select
             value={formData.duration}
             onValueChange={(value) => setFormData({ ...formData, duration: value })}
             required
+            disabled={isLoading}
           >
             <SelectTrigger id="duration">
-              <SelectValue placeholder="Select project duration" />
+              <SelectValue placeholder="Select Proposal duration" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Less than 1 month">Less than 1 month</SelectItem>
@@ -213,21 +273,61 @@ export default function CreatePost({ onSubmit }) {
         </div>
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="applicationDeadline">Application Deadline</Label>
+
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+          <PopoverTrigger asChild disabled={isLoading}>
+            <div tabIndex={0} className="w-full cursor-pointer border rounded-md px-3 py-2 flex items-center justify-between">
+              {formData.applicationDeadline ? formData.applicationDeadline.toLocaleDateString() : "Select a date"}
+              <Calendar1 className="ml-auto h-4 w-4 opacity-50" />
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto px-4 z-[9999] pointer-events-auto" align="start">
+            <Calendar
+              initialFocus
+              mode="single"
+              selected={formData.applicationDeadline}
+              onSelect={(date) => {
+                setFormData((prev) => ({ ...formData, applicationDeadline: date ?? prev.applicationDeadline }));
+                setIsOpen(false);
+              }}
+              disabled={(date) => date < new Date()}
+              required
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+
       <div className="flex justify-end gap-2">
         <Button
           type="submit"
           disabled={
-            !formData.title ||
-            !formData.description ||
-            formData.requirements.length === 0 ||
+            !formData.proposalTitle ||
+            !formData.proposalDescription ||
+            formData.skillsRequired.length === 0 ||
             formData.lookingFor.length === 0 ||
             !formData.timeCommitment ||
-            !formData.duration
+            !formData.duration ||
+            formData.applicationDeadline?.toDateString() === new Date().toDateString() ||
+            isLoading
           }
         >
-          Create Post
+          {isLoading ?
+            <span className="flex flex-row items-center">
+              <Loader className="animate-spin mr-2 h-4 w-4" />
+              Creating...
+            </span>
+            :
+            <span>
+              Create Post
+            </span>
+          }
         </Button>
       </div>
-    </form>
+    </form >
   )
 }
+
+
+export default CreatePost;

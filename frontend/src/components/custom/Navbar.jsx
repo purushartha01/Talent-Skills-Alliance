@@ -37,11 +37,13 @@ const Navbar = () => {
     isLargeScreen ?
       <div className="h-[10vh] w-full flex flex-row items-center justify-evenly shadow-lg sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="h-full w-1/10 flex items-center justify-center">
-          <a className="btn btn-ghost normal-case text-xl font-[Lobster]">TSA</a>
+          <Link className="btn btn-ghost normal-case text-xl font-[Lobster] cursor-pointer" to={"/"}>
+            TSA
+          </Link>
         </div>
         <div className="h-full w-8/10 flex items-center justify-center">
           <ul className="w-1/2   flex flex-row justify-around p-0">
-            {links.map((link, index) => {
+            {/* {links.map((link, index) => {
               return (
                 <li key={index} className="w-1/3 ">
                   <Link to={link.to} className="w-full flex items-center justify-center p-2 hover:bg-gray-200 rounded-md text-xl">
@@ -49,7 +51,7 @@ const Navbar = () => {
                   </Link>
                 </li>
               )
-            })}
+            })} */}
           </ul>
         </div>
         <div className="h-full w-1/10 flex items-center justify-center px-2">

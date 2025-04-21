@@ -38,27 +38,6 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    education: [{
-        courseName: {
-            type: String,
-            required: true,
-        },
-        from: {
-            type: Number,
-            required: true,
-        },
-        to: {
-            type: Number,
-            required: true
-        },
-        institute: {
-            type: String,
-            required: true
-        },
-        score: {
-            type: Number,
-        }
-    }],
     expertise: {
         skills: [{ name: String, proficiency: String }],
         personalProjects: [{
@@ -104,24 +83,10 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'proposal'
     }],
-    projects: [{
+    savedProposals: [{
         type: mongoose.Types.ObjectId,
-        ref: 'project'
+        ref: 'proposal'
     }],
-    currentProject: {
-        type: mongoose.Types.ObjectId,
-        ref: 'project'
-    },
-    isAvailable: {
-        type: Boolean,
-        required: true,
-        default: true
-    },
-    isActivated: {
-        type: Boolean,
-        required: true,
-        default: true
-    },
 }, {
     timestamps: true
 })

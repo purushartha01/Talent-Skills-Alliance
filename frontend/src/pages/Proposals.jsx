@@ -6,20 +6,27 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AuthContext } from "@/context/AuthContext"
 import { serverAxiosInstance } from "@/utilities/config"
 import { DialogTrigger } from "@radix-ui/react-dialog"
 import { ClockAlert, PlusCircle, Search, Users } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 
 const Proposals = () => {
-    
+
+    const { getCurrAuth } = useContext(AuthContext);
+    const currUser = getCurrAuth();
+
     const [isLoading, setIsLoading] = useState(false)
     const [isDisabled, setIsDisabled] = useState(false)
+    const [needsReload, setNeedsReload] = useState(false);
 
     const [allProposals, setAllProposals] = useState([]);
-    const [needsReload, setNeedsReload] = useState(false);
+    const [allFilteredProposals, setAllFilteredProposals] = useState([]);
+    const [allSavedProposals, setAllSavedProposals] = useState([]);
+    const [allAppliedProposals, setAllAppliedProposals] = useState([]);
 
     // Fetch all proposals from the server on page load
     useEffect(() => {
@@ -29,7 +36,10 @@ const Proposals = () => {
                 await serverAxiosInstance.get("/user/proposals").then((response) => {
                     if (response.status === 200) {
                         const proposals = response.data.foundProposals;
-                        setAllProposals((prevProposals) => [...prevProposals, ...proposals]);
+                        const savedProposals = response.data.savedProposals;
+                        setAllSavedProposals(savedProposals);
+                        setAllProposals(proposals);
+                        setAllAppliedProposals(proposals.filter((proposal) => proposal.applicants.some((applicant) => applicant._id === response.data.currUserId)));
                     }
                     setIsLoading(false);
                     setIsDisabled(false);
@@ -45,8 +55,8 @@ const Proposals = () => {
     }, [needsReload])
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-7xl">
-            <div className="flex flex-col md:flex-row gap-6">
+        <div className="container mx-auto px-4 py-8 max-w-7xl h-[82vh] flex flex-1">
+            <div className="flex flex-col md:flex-row gap-6 flex-1 h-full">
                 {/* sidebar */}
                 <div className="w-full md:w-64 space-y-6">
                     <div className="rounded-lg border p-4 space-y-4">
@@ -99,14 +109,14 @@ const Proposals = () => {
                                     Create a New Proposal
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+                            <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-visible focus:outline-none">
                                 <DialogHeader>
                                     <DialogTitle>Create a New Proposal</DialogTitle>
                                     <DialogDescription>
                                         Share your project idea and find the perfect team members to collaborate with.
                                     </DialogDescription>
                                 </DialogHeader>
-                                <CreatePost onSubmit={"addNewPost"} />
+                                <CreatePost onSubmit={"addNewPost"} shouldParentUpdate={setNeedsReload} />
                             </DialogContent>
                         </Dialog>
                     </div>
@@ -126,28 +136,51 @@ const Proposals = () => {
                     </div>
                 </div>
 
-
                 {/* main content */}
-                <div className="flex-1 space-y-6">
-                    <Tabs defaultValue="all" className="w-full">
+                <div className="flex-1 space-y-6 h-full flex flex-col">
+                    <Tabs defaultValue="all" className="flex flex-col flex-1 h-full max-h-[80vh]">
                         <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger value="all">All Proposals</TabsTrigger>
                             <TabsTrigger value="saved">Saved Proposals</TabsTrigger>
                             <TabsTrigger value="applied">Applied Proposals</TabsTrigger>
                         </TabsList>
-                        <TabsWithLoader value={"all"} styles={"mt-6 space-y-6"} isLoading={isLoading}>
+                        <TabsWithLoader
+                            value={"all"}
+                            styles={"mt-6 space-y-6 h-full overflow-auto"}
+                            isLoading={isLoading}
+                            proposalList={allProposals}
+                            savedProposals={allSavedProposals}
+                            appliedProposals={allAppliedProposals}
+                            shouldParentUpdate={setNeedsReload}
+                        >
                             <div className="text-center py-12">
                                 <h3 className="text-lg font-medium">No projects found</h3>
                                 <p className="text-muted-foreground">Try adjusting your search or filters</p>
                             </div>
                         </TabsWithLoader>
-                        <TabsWithLoader value={"saved"} styles={"mt-6 space-y-6"} isLoading={isLoading}>
+                        <TabsWithLoader
+                            value={"saved"}
+                            styles={"mt-6 space-y-6 h-full overflow-auto"}
+                            isLoading={isLoading}
+                            proposalList={allSavedProposals}
+                            savedProposals={allSavedProposals}
+                            appliedProposals={allAppliedProposals}
+                            shouldParentUpdate={setNeedsReload}
+                        >
                             <div className="text-center py-12">
                                 <h3 className="text-lg font-medium">No saved projects</h3>
                                 <p className="text-muted-foreground">Try adjusting your search or filters</p>
                             </div>
                         </TabsWithLoader>
-                        <TabsWithLoader value={"applied"} styles={"mt-6 space-y-6"} isLoading={isLoading}>
+                        <TabsWithLoader
+                            value={"applied"}
+                            styles={"mt-6 space-y-6 h-full overflow-auto"}
+                            isLoading={isLoading}
+                            proposalList={allAppliedProposals}
+                            savedProposals={allSavedProposals}
+                            appliedProposals={allAppliedProposals}
+                            shouldParentUpdate={setNeedsReload}
+                        >
                             <div className="text-center py-12">
                                 <h3 className="text-lg font-medium">No applied projects</h3>
                                 <p className="text-muted-foreground">Try adjusting your search or filters</p>

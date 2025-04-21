@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { EyeClosedIcon, EyeIcon, Info } from "lucide-react";
+import { EyeClosedIcon, EyeIcon, Info, Loader2 } from "lucide-react";
 import { useContext, useState } from "react";
 import { set, z } from "zod";
 import { useForm } from "react-hook-form";
@@ -29,6 +29,8 @@ const Login = () => {
   const { setCurrAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const formSchema = z.object({
     email: z.string().email({ message: 'Invalid email address' }),
     password: z
@@ -48,7 +50,7 @@ const Login = () => {
 
 
   const onSubmit = (data) => {
-    logStatements("Login Data", data);
+    setIsLoading(true);
     serverAxiosInstance.post("/auth/login", data)
       .then((res) => {
         console.log("Login Response", res.data);
@@ -64,7 +66,9 @@ const Login = () => {
           description: err.response?.data?.error,
           cancelable: true,
         });
-      })
+      }).finally(() => {
+        setIsLoading(false);
+      });
   }
 
 
@@ -149,7 +153,13 @@ const Login = () => {
               </div>
 
               <Button type="submit" onClick={(e) => console.log()} disabled={form.formState.isValid ? false : true} className={`w-3/4 bg-blue-500 text-white hover:bg-blue-600`}>
-                Login
+                {isLoading ? <div className="w-full flex items-center justify-center">
+                  <Loader2 className="animate-spin mr-2" size={16} /> Logging In...
+                </div> :
+                  <span className="w-full flex items-center justify-center">
+                    Login
+                  </span>
+                }
               </Button>
             </form>
           </Form>
