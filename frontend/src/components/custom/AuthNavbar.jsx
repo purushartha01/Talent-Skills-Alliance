@@ -38,8 +38,8 @@ const AuthNavbar = () => {
             text: "Home",
         },
         {
-            to: "/explore",
-            text: "Explore",
+            to: "/proposals",
+            text: "Proposals",
         }
     ];
 

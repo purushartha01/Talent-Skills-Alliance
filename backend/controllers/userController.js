@@ -3,6 +3,7 @@ const { removeUserById } = require("../services/UserService");
 const ImageKit = require("imagekit");
 const { imagKitPublicKey, imagKitPrivateKey, imagKitUrlEndpoint } = require("../config/serverConfig");
 const { returnNonSensitiveData } = require("../utitlity/utitlityFunctions");
+const ProposalModel = require("../model/Proposal");
 
 
 const imagekit = new ImageKit({
@@ -10,8 +11,6 @@ const imagekit = new ImageKit({
     privateKey: imagKitPrivateKey,
     urlEndpoint: imagKitUrlEndpoint
 })
-
-
 
 //TODO: basic logic completed, handling data from DB left.
 const getUserProfile = async (req, res, next) => {
@@ -74,6 +73,104 @@ const removeUser = async (req, res, next) => {
     }
 }
 
+
+const getAllProposals = async (req, res, next) => {
+    try {
+        const foundProposals = await ProposalModel.find()
+            .populate('author', 'username email id')
+            .populate('applicants', 'username email id')
+            .sort({ createdAt: -1 });
+
+        if (!foundProposals) {
+            res.locals.statusCode = 404;
+            throw new Error("No proposals found!");
+        }
+
+        console.log("Found proposals: ", foundProposals);
+        res.status(200).json({ status: 'success', message: 'Proposals fetched successfully!', foundProposals });
+
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
+
+const getProposal = async (req, res, next) => {
+    try {
+        const proposalID = req.params.proposalID;
+        if (!proposalID) {
+            res.locals.statusCode = 422;
+            throw new Error("Request data not provided.");
+        }
+        console.log("Proposal to be fetched: ", proposalID);
+        const foundProposal = await ProposalModel.findById(proposalID)
+            .populate('author', 'username email id')
+            .populate('applicants', 'username email id')
+
+        if (!foundProposal) {
+            res.locals.statusCode = 404;
+            throw new Error("No proposals found!");
+        }
+        console.log("Found proposals: ", foundProposal);
+        res.status(200).json({ status: 'success', message: 'Proposal fetched successfully!', foundProposal });
+
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
+
+
+const createProposal = async (req, res, next) => {
+    try {
+        if (!req.body || Object.keys(req.body).length === 0) {
+            res.locals.statusCode = 422;
+            throw new Error("Request data not provided.");
+        }
+
+        // TODO: add logic to create proposal
+
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
+
+
+const updateProposal = async (req, res, next) => {
+    try {
+        if (!req.body || Object.keys(req.body).length === 0) {
+            res.locals.statusCode = 422;
+            throw new Error("Request data not provided.");
+        }
+
+        // TODO: add logic to update proposal
+
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
+
+
+const deleteProposal = async (req, res, next) => {
+    try {
+        const proposalID = req.params.proposalID;
+        if (!proposalID) {
+            res.locals.statusCode = 422;
+            throw new Error("Request data not provided.");
+        }
+
+        // TODO: add logic to delete proposal
+
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
+
+
+
 const getImageKitAuth = async (req, res, next) => {
     try {
         const authData = await imagekit.getAuthenticationParameters();
@@ -85,7 +182,6 @@ const getImageKitAuth = async (req, res, next) => {
     }
 }
 
-
 module.exports = {
-    getUserProfile, updateUserProfile, removeUser, getImageKitAuth
+    getUserProfile, updateUserProfile, removeUser, getImageKitAuth, getAllProposals, getProposal, createProposal, updateProposal, deleteProposal
 }

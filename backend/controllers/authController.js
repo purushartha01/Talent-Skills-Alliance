@@ -99,7 +99,6 @@ const generateOTP = async (req, res, next) => {
             res.locals.statusCode = 422;
             throw new Error("Request body or its members not found");
         }
-
         const { email } = req.body;
         console.log("Email: ", email);
 

@@ -40,7 +40,7 @@ const Navbar = () => {
           <a className="btn btn-ghost normal-case text-xl font-[Lobster]">TSA</a>
         </div>
         <div className="h-full w-8/10 flex items-center justify-center">
-          <ul className="w-1/2   flex flex-row justify-between p-0">
+          <ul className="w-1/2   flex flex-row justify-around p-0">
             {links.map((link, index) => {
               return (
                 <li key={index} className="w-1/3 ">

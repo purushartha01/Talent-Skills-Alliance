@@ -3,7 +3,7 @@ import Home from './../pages/Home';
 import PageLayout from '@/components/custom/PageLayout';
 import Login from '@/components/custom/Login';
 import Signup from '@/components/custom/Signup';
-import Explore from '@/pages/Explore';
+import Proposals from '@/pages/Proposals';
 import { useContext } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 import NotFound from '@/pages/NotFound';
@@ -35,8 +35,8 @@ const useMyRouter = () => {
 
     const protectedRoutes = [
         {
-            path: '/explore',
-            element: <Explore />,
+            path: '/proposals',
+            element: <Proposals />,
         },
         {
             path: '/user',

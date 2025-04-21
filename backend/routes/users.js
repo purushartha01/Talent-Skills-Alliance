@@ -14,6 +14,16 @@ userRouter.route('/profile')
 userRouter.route('/remove/:userID')
     .delete(userController.removeUser);
 
+userRouter.route('/proposals')
+    .get(userController.getAllProposals);
+
+userRouter.route('/proposal/:proposalID')
+    .get(userController.getProposal)
+    .post(userController.createProposal)
+    .put(userController.updateProposal)
+    .delete(userController.deleteProposal);
+
+
 userRouter.route('/auth/imagekit').get(userController.getImageKitAuth);
 
 //TODO: add view profile controller handler

@@ -39,7 +39,7 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
             }
         }).catch((res) => {
             toast.error("Failed to send OTP", {
-                description: res.response.data.error,
+                description: res?.response?.data?.error,
                 duration: 5000,
                 action: {
                     label: "X",
