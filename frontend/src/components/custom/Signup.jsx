@@ -9,13 +9,13 @@ import { EyeClosedIcon, EyeIcon } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../ui/button"
 import CustomTooltip from "./CustomTooltip"
-import { logStatements } from "@/utilities/utilityMethods"
 import OTPComponent from "./OTPComponent"
 import { serverAxiosInstance } from "@/utilities/config"
 import { AuthContext } from "@/context/AuthContext"
 
 const Signup = () => {
 
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -33,8 +33,9 @@ const Signup = () => {
 
 
   const navigate = useNavigate();
-  const { setCurrAuth } = useContext(AuthContext);
+  const { setCurrAuth, getCurrAuth } = useContext(AuthContext);
 
+  const currAuth = getCurrAuth();
 
   const signupFormSchema = z.object({
     username: z.string().min(2, { message: "Name is required" }),
@@ -70,9 +71,8 @@ const Signup = () => {
         });
         form.reset();
         setCurrAuth(res.data.userData);
-        navigate("/user/profile");
+        setShouldRedirect(true);
       }
-
     }).catch((err) => {
       toast.error("Signup failed", {
         description: err.response.data.error,
@@ -87,6 +87,11 @@ const Signup = () => {
   const isEmailValid = emailSchema.safeParse(email).success;
 
   useEffect(() => { setIsEmailVerified(false) }, [email])
+  useEffect(() => {
+    if (shouldRedirect) {
+      navigate("/user/profile");
+    }
+  }, [shouldRedirect, navigate]);
 
   return (
     <div className="h-[90vh] w-full flex flex-col items-center justify-center">

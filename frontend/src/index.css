@@ -237,4 +237,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  Button{
+    @apply cursor-pointer;
+  }
 }
