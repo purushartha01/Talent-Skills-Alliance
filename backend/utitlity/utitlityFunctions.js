@@ -15,4 +15,11 @@ const generateOTP = () => {
     return require('crypto').randomInt(100000, 1000000);
 }
 
-module.exports = { generateUniqueOTP };
+const returnNonSensitiveData = (user) => {
+    const sensitiveData = ['password', 'createdAt', 'updatedAt', '__v'];
+    return Object.fromEntries(
+        Object.entries(user).filter(([key]) => !sensitiveData.includes(key))
+    );
+}
+
+module.exports = { generateUniqueOTP,returnNonSensitiveData };

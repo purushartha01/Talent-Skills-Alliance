@@ -4,6 +4,26 @@ const bcrypt = require('bcryptjs');
 const SALT_ROUNDS = 12;
 
 const UserSchema = new mongoose.Schema({
+    about: {
+        name: {
+            type: String,
+        },
+        bio: {
+            type: String,
+        },
+        location: {
+            type: String,
+        },
+        title: {
+            type: String,
+        },
+        coverImg: {
+            type: String,
+        },
+        profileImg: {
+            type: String,
+        }
+    },
     username: {
         type: String,
         required: true,
@@ -17,11 +37,6 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    },
-    professionalStatus: {
-        type: String,
-        required: true,
-        default: 'student'
     },
     education: [{
         courseName: {
@@ -44,11 +59,47 @@ const UserSchema = new mongoose.Schema({
             type: Number,
         }
     }],
-    skills: [
-        {
+    expertise: {
+        skills: [{ name: String, proficiency: String }],
+        personalProjects: [{
+            projectTitle: String,
+            projectDescription: String,
+            projectLinks: [String],
+            projectSkills: [{
+                name: String
+            }],
+            timeframe: String
+        }]
+    },
+    links:
+    {
+        github: {
             type: String,
-        }
-    ],
+        },
+        linkedin: {
+            type: String,
+        },
+        website: {
+            type: String,
+        },
+        twitter: {
+            type: String,
+        },
+        preferredEmail: {
+            type: String,
+        },
+        extraLinks: [
+            {
+                linkTo: {
+                    type: String,
+                },
+                linkOf: {
+                    type: String,
+                }
+            }
+        ]
+
+    },
     proposals: [{
         type: mongoose.Types.ObjectId,
         ref: 'proposal'
@@ -70,10 +121,6 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: true
-    },
-    profilePicture: {
-        type: String,
-        default: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
     },
 }, {
     timestamps: true

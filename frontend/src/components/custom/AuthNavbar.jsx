@@ -11,7 +11,7 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Bell, Folder, LogOut, MenuIcon, MessageSquare, Settings, SidebarCloseIcon, UnfoldVerticalIcon, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -24,6 +24,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 const AuthNavbar = () => {
 
 
+    const { logOut } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const isLargeScreen = useMediaQuery('(min-width: 768px)');
     const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +43,13 @@ const AuthNavbar = () => {
         }
     ];
 
-    console.log("Auth Navbar Rendered");
+    const handleLogout = () => {
+        logOut();
+        if (!isLargeScreen) {
+            closeDrawer();
+        }
+        navigate("/login", { replace: true });
+    }
 
     return (
         isLargeScreen ?
@@ -62,21 +70,10 @@ const AuthNavbar = () => {
                         })}
                     </ul>
                 </div>
-                {/* <div className="h-full w-1/10 flex items-center justify-center px-2">
-                    <Link to="/login" className="w-full flex items-center justify-center p-2 hover:bg-gray-200 rounded-md text-xl">Login</Link>
-                </div> */}
+
 
 
                 <div className="flex items-center gap-2 md:gap-4">
-                    {/* <Button variant="ghost" size="icon" className="relative md:flex">
-                        <Bell className="h-5 w-5" />
-                        <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-primary"></span>
-                        <span className="sr-only">Notifications</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" className="hidden md:flex">
-                        <MessageSquare className="h-5 w-5" />
-                        <span className="sr-only">Messages</span>
-                    </Button> */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -115,7 +112,7 @@ const AuthNavbar = () => {
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive/100" onClick={handleLogout}>
                                 <LogOut className="mr-2 h-4 w-4" />
                                 <span>Log out</span>
                             </DropdownMenuItem>
@@ -192,7 +189,7 @@ const AuthNavbar = () => {
                                             <span>Settings</span>
                                         </Link>
                                         {/* TODO: Add user logout functionality */}
-                                        <Link to="#" className="flex flex-row items-center mb-2 text-destructive/100 hover:bg-gray-300" onClick={closeDrawer}>
+                                        <Link to="#" className="flex flex-row items-center mb-2 text-destructive/100 hover:bg-gray-300" onClick={e => { closeDrawer(); handleLogout(); }}>
                                             <LogOut className="mr-2 h-4 w-4" />
                                             <span>Log out</span>
                                         </Link>

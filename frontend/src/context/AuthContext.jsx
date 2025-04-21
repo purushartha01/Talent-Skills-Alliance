@@ -14,8 +14,14 @@ export const AuthProvider = ({ children }) => {
         // console.log("Auth Value", authVal);
         setAuth(authVal)
     }
+
+    const logOut = () => {
+        localStorage.removeItem("TSAUser");
+        setAuth({});
+    }
+
     return (
-        <AuthContext.Provider value={{ getCurrAuth, setCurrAuth }}>
+        <AuthContext.Provider value={{ getCurrAuth, setCurrAuth, logOut }}>
             {children}
         </AuthContext.Provider>
     );

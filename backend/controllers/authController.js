@@ -14,7 +14,7 @@ const loginActionHandler = async (req, res, next) => {
             throw new Error("Request body or its members not found");
         }
         const { email, password } = req.body;
-        console.log(`\nemail:${email} \npassword: ${password}`);
+
         const doesUserExist = await userExists(email);
         console.log(`DoesUserExist: ${doesUserExist}`);
         if (!doesUserExist) {
@@ -31,8 +31,14 @@ const loginActionHandler = async (req, res, next) => {
             res.locals.statusCode = 403;
             throw new Error("Account is not yet activated!");
         }
-        const user = { id: doesUserExist.id, username: doesUserExist.username, email: doesUserExist.email };
 
+        const sensitiveData = ['password', 'createdAt', 'updatedAt', '__v'];
+        const user = Object.fromEntries(
+            Object.entries(doesUserExist.toObject()).filter(([key]) => !sensitiveData.includes(key))
+        );
+
+
+        console.log("User: ", user);
         const accessToken = jwt.sign({ id: doesUserExist.id, email: doesUserExist.email }, ACCESS_KEY, jwt_options_access);
         const refreshToken = jwt.sign({ id: doesUserExist.id, email: doesUserExist.email }, REFRESH_KEY, jwt_options_refresh);
         res.cookie('AccessToken', accessToken, cookieOptionsAccess);

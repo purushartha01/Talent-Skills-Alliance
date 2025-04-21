@@ -39,7 +39,11 @@ const cookieOptionsRefresh = {
 const mailerID = process.env.HELP_GMAIL;
 const mailerPassKey = process.env.APP_PWD_HELP_GMAIL;
 
+const imagKitPublicKey= process.env.IMAGEKIT_PUBLIC_KEY;
+const imagKitPrivateKey= process.env.IMAGEKIT_PRIVATE_KEY;
+const imagKitUrlEndpoint= process.env.IMAGEKIT_URL_ENDPOINT;
+
 
 module.exports = {
-    portno, dbConnectionString, jwt_options_access, jwt_options_refresh, ACCESS_KEY, REFRESH_KEY, cookieOptionsAccess, cookieOptionsRefresh, cookieSecret, mailerID, mailerPassKey
+    portno, dbConnectionString, jwt_options_access, jwt_options_refresh, ACCESS_KEY, REFRESH_KEY, cookieOptionsAccess, cookieOptionsRefresh, cookieSecret, mailerID, mailerPassKey, imagKitPublicKey, imagKitPrivateKey, imagKitUrlEndpoint
 }

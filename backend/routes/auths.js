@@ -14,6 +14,7 @@ authRouter.route('/verify').post(authController.handleOTPVerification);
 authRouter.route('/generate').post(authController.generateOTP);
 
 
+
 // auth
 
 module.exports = authRouter;

@@ -6,7 +6,6 @@ const userRouter = express.Router();
 
 userRouter.use(authMiddleware)
 
-
 userRouter.route('/profile')
     .get(userController.getUserProfile)
     .put(userController.updateUserProfile)
@@ -15,6 +14,7 @@ userRouter.route('/profile')
 userRouter.route('/remove/:userID')
     .delete(userController.removeUser);
 
+userRouter.route('/auth/imagekit').get(userController.getImageKitAuth);
 
 //TODO: add view profile controller handler
 userRouter.route('/view/:id');
