@@ -14,15 +14,15 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
     const [saved, setSaved] = useState(isSaved);
     const [isLoading, setLoading] = useState(false);
 
-    const handleSave = (proposalId) => {
+    const handleSave = async(proposalId) => {
         setLoading(true);
         console.log("Saved", proposalId)
-        serverAxiosInstance.post('/user/proposal/save', { proposalID: proposalId })
+        await serverAxiosInstance.post('/user/proposal/save', { proposalID: proposalId })
             .then((res) => {
                 // console.log(res.data)
                 if (res.status === 200) {
                     setSaved(true);
-                    setStatusChange(true);
+                    setStatusChange((prev)=>prev+1);
                 }
             })
             .catch((err) => {
@@ -32,14 +32,15 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
             })
     }
 
-    const handleUnsave = (proposalId) => {
+    const handleUnsave = async(proposalId) => {
         console.log("Unsave", proposalId)
         setLoading(true);
-        serverAxiosInstance.post('/user/proposal/unsave', { proposalID: proposalId })
+        await serverAxiosInstance.post('/user/proposal/unsave', { proposalID: proposalId })
             .then((res) => {
                 if (res.status === 200) {
+                    console.log("Withing then()")
                     setSaved(false);
-                    setStatusChange(true);
+                    setStatusChange((prev)=>prev+1);
                 }
             })
             .catch((err) => {
@@ -49,13 +50,14 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
             })
     }
 
-    const handleApply = (proposalId) => {
+    const handleApply = async(proposalId) => {
         console.log("Applied", proposalId)
         setLoading(true);
-        serverAxiosInstance.post('/user/proposal/apply', { proposalID: proposalId })
+        await serverAxiosInstance.post('/user/proposal/apply', { proposalID: proposalId })
             .then((res) => {
                 if (res.status === 200) {
-                    setStatusChange(true);
+                    console.log("Withing then()")
+                    setStatusChange((prev)=>prev+1);
                 }
             })
             .catch((err) => {
@@ -208,6 +210,7 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
                     size="sm"
                     className={"flex items-center gap-2"}
                     onClick={e => { e.preventDefault(); handleApply(post?._id) }}
+                    disabled={isApplied || isLoading}
                 >
                     {isApplied ? (
                         <>
