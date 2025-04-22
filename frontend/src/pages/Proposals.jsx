@@ -116,7 +116,7 @@ const Proposals = () => {
                   Create a New Proposal
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-visible focus:outline-none">
+              <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-auto focus:outline-none">
                 <DialogHeader>
                   <DialogTitle>Create a New Proposal</DialogTitle>
                   <DialogDescription>

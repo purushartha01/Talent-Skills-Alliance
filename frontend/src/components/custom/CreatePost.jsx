@@ -121,7 +121,7 @@ const CreatePost = ({ onSubmit, shouldParentUpdate }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6 ">
       <div className="space-y-2">
         <Label htmlFor="proposalTitle">Proposal Title</Label>
         <Input
