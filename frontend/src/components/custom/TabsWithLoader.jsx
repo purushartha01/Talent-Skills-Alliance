@@ -30,7 +30,7 @@ const TabsWithLoader = ({ value, styles, isLoading, shouldParentUpdate, proposal
                                 const isSaved = savedProposals?.some((savedProposal) => savedProposal._id === proposal._id);
                                 const isApplied = proposal?.applicants?.some((applicant) => {
                                     console.log("applicant: ", applicant, "user: ", user?._id)
-                                    return applicant._id === user?._id;
+                                    return applicant?.applicant?._id === user?._id;
                                 });
                                 console.log("isApplied: ", isApplied)
 

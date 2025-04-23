@@ -92,7 +92,7 @@
   --breakpoint-xs: 320px;
 }
 
-@theme inline {
+@theme inline4{
 
   --radius-sm: calc(var(--radius) - 4px);
 
@@ -236,6 +236,18 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  ::-webkit-scrollbar{
+    @apply w-2
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-lg
+  }
+
+  ::-webkit-scrollbar-track{
+    @apply bg-gray-100
   }
 
   Button{

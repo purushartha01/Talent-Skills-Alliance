@@ -4,6 +4,7 @@ const ImageKit = require("imagekit");
 const { imagKitPublicKey, imagKitPrivateKey, imagKitUrlEndpoint } = require("../config/serverConfig");
 const { returnNonSensitiveData } = require("../utitlity/utitlityFunctions");
 const ProposalModel = require("../model/Proposal");
+const ProjectModel = require("../model/Project");
 
 
 const imagekit = new ImageKit({
@@ -80,7 +81,13 @@ const getAllProposals = async (req, res, next) => {
     try {
         const foundProposals = await ProposalModel.find()
             .populate('author', 'username email id about')
-            .populate('applicants', 'username email id about')
+            .populate({
+                path: 'applicants',
+                populate: {
+                    path: 'applicant',
+                    select: 'username email id about'
+                }
+            })
             .sort({ createdAt: -1 });
 
         const foundSavedProposals = await UserModel.findById(req.currUserId, { savedProposals: 1 })
@@ -88,7 +95,12 @@ const getAllProposals = async (req, res, next) => {
                 path: 'savedProposals',
                 populate: [
                     { path: 'author', select: 'username email id about' },
-                    { path: 'applicants', select: 'username email id about' }
+                    {
+                        path: 'applicants', populate: {
+                            path: 'applicant',
+                            select: 'username email id about'
+                        }
+                    }
                 ]
             });
 
@@ -148,6 +160,19 @@ const createProposal = async (req, res, next) => {
         if (!updateUserProposal) {
             res.locals.statusCode = 422;
             throw new Error("Proposal could not be created!");
+        }
+
+        const createdProject=await ProjectModel.create({
+            projectTitle: formData.proposalTitle,
+            teamLeader: req.currUserId,
+            projectDescription: formData.proposalDescription,
+            skillsUsed: formData.skillsRequired,
+            timeCommitment: formData.timeCommitment,
+        })
+
+        if (!createdProject) {
+            res.locals.statusCode = 422;
+            throw new Error("Project could not be created!");
         }
 
         res.status(201).json({ status: 'success', message: 'Proposal created successfully!' });
@@ -239,11 +264,29 @@ const applyProposal = async (req, res, next) => {
             res.locals.statusCode = 422;
             throw new Error("Request data not provided.");
         }
-        const { proposalID } = req.body;
+        const { proposalID, appliedOn } = req.body;
+        const foundProposal = await ProposalModel.findById(proposalID);
+        if (!foundProposal) {
+            res.locals.statusCode = 422;
+            throw new Error("Proposal not found!");
+        }
 
-        const applyToProposal = await ProposalModel.findByIdAndUpdate(proposalID, { $addToSet: { applicants: req.currUserId } }, { new: true });
+        const alreadyApplied = foundProposal.applicants.some((applicant) => applicant.applicant.toString() === req.currUserId.toString());
+
+        if (alreadyApplied) {
+            res.locals.statusCode = 422;
+            throw new Error("You have already applied for this proposal!");
+        }
+        const applyToProposal = await ProposalModel.findByIdAndUpdate(proposalID, {
+            $addToSet: {
+                applicants: {
+                    applicant: req.currUserId,
+                    appliedOn: appliedOn
+                }
+            }
+        }, { new: true });
         console.log("applyToProposal: ", applyToProposal);
-        
+
         if (!applyToProposal) {
             res.locals.statusCode = 422;
             throw new Error("Proposal could not be applied!");
@@ -256,6 +299,35 @@ const applyProposal = async (req, res, next) => {
 }
 
 
+const getUserProposals = async (req, res, next) => {
+    try {
+        console.log("within getUserProposals() method: \n");
+        const userID = req.currUserId;
+        if (!userID) {
+            res.locals.statusCode = 422;
+            throw new Error("Request data not provided.");
+        }
+        console.log("User to be fetched: ", userID);
+        const foundUserProposals = await ProposalModel.find({ author: userID })
+            .populate('author', 'username email id about')
+            .populate({
+                path: 'applicants',
+                populate: { path: 'applicant', select: 'username email id about' }
+            })
+            .sort({ createdAt: -1 });
+
+        if (!foundUserProposals || foundUserProposals.length === 0) {
+            res.locals.statusCode = 404;
+            throw new Error("No proposals found!");
+        }
+        console.log("Found proposals: ", foundUserProposals);
+        res.status(200).json({ status: 'success', message: 'Proposals fetched successfully!', foundUserProposals });
+
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
 
 
 const getImageKitAuth = async (req, res, next) => {
@@ -270,5 +342,5 @@ const getImageKitAuth = async (req, res, next) => {
 }
 
 module.exports = {
-    getUserProfile, updateUserProfile, removeUser, getImageKitAuth, getAllProposals, getProposal, createProposal, updateProposal, deleteProposal, applyProposal, saveProposal, unsaveProposal
+    getUserProfile, updateUserProfile, removeUser, getImageKitAuth, getAllProposals, getProposal, createProposal, updateProposal, deleteProposal, applyProposal, saveProposal, unsaveProposal, getUserProposals
 }

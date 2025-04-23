@@ -10,6 +10,7 @@ import NotFound from '@/pages/NotFound';
 import UserProfile from '@/pages/UserProfile';
 import Settings from '@/pages/Settings';
 import UserTeams from '@/pages/UserTeams';
+import ManageProposals from '@/pages/ManageProposals';
 
 
 const useMyRouter = () => {
@@ -36,7 +37,16 @@ const useMyRouter = () => {
     const protectedRoutes = [
         {
             path: '/proposals',
-            element: <Proposals />,
+            children: [
+                {
+                    path: '/proposals',
+                    element: <Proposals />
+                },
+                {
+                    path: '/proposals/manage',
+                    element: <ManageProposals />,
+                },
+            ],
         },
         {
             path: '/user',

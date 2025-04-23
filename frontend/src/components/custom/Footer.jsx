@@ -2,7 +2,7 @@ import { Code} from "lucide-react"
 
 const Footer = () => {
   return (
-    <footer className="w-full h-[8vh] border-t bg-background py-6">
+    <footer className="w-full h-[8vh] fixed bottom-0 border-t bg-background py-6">
         <div className="w-full flex flex-col items-center justify-between gap-4 md:flex-row px-8">
           <div className="flex items-center gap-2">
             <Code className="h-6 w-6" />
@@ -16,4 +16,6 @@ const Footer = () => {
   )
 }
 
-export default Footer
+export default Footer;
+
+// Ensure the parent container of the Footer has enough content height or use `overflow-y-auto` on the parent container to allow scrolling without affecting the sticky footer.

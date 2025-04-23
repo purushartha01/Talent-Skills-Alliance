@@ -17,6 +17,8 @@ userRouter.route('/remove/:userID')
 userRouter.route('/proposals')
     .get(userController.getAllProposals);
 
+userRouter.route('/proposals/user').get(userController.getUserProposals);
+
 
 
 userRouter.route('/proposal/save').post(userController.saveProposal);

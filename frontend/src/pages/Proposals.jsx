@@ -19,6 +19,9 @@ import { ClockAlert, PlusCircle, Search, Users } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+
+// TODO: Add filter for proposals based on the user's skills and interests, as well as the proposal's status (open, closed, etc.), and some common filters like "recent", "popular", etc.
+
 const Proposals = () => {
   const { getCurrAuth } = useContext(AuthContext);
   const currUser = getCurrAuth();
@@ -48,7 +51,7 @@ const Proposals = () => {
               setAllProposals(proposals);
               setAllAppliedProposals(
                 proposals.filter((proposal) =>
-                  proposal.applicants.some((applicant) => applicant._id === currUserId)
+                  proposal.applicants.some((applicant) => applicant?.applicant?._id=== currUserId)
                 )
               );
             }
@@ -64,7 +67,7 @@ const Proposals = () => {
       }
     };
     fetchAllProposals();
-  }, [needsReload]);
+  }, [needsReload, currUserId]);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl h-[82vh] flex flex-1">
@@ -78,8 +81,8 @@ const Proposals = () => {
                 placeholder="Search for proposals..."
                 className="pl-8"
                 disabled={isDisabled || isLoading}
-                // value={searchQuery}
-                // onChange={(e) => setSearchQuery(e.target.value)}
+              // value={searchQuery}
+              // onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <Separator />
@@ -90,7 +93,7 @@ const Proposals = () => {
                   // variant={activeFilter === "all" ? "default" : "ghost"}
                   className="w-full justify-start"
                   disabled={isDisabled || isLoading}
-                  // onClick={() => setActiveFilter("all")}
+                // onClick={() => setActiveFilter("all")}
                 >
                   <Users className="mr-2 h-4 w-4" />
                   All Proposals
@@ -99,7 +102,7 @@ const Proposals = () => {
                   // variant={activeFilter === "saved" ? "default" : "ghost"}
                   className="w-full justify-start"
                   disabled={isDisabled || isLoading}
-                  // onClick={() => setActiveFilter("saved")}
+                // onClick={() => setActiveFilter("saved")}
                 >
                   <ClockAlert className="mr-2 h-4 w-4" />
                   Recent Proposals
@@ -132,6 +135,7 @@ const Proposals = () => {
             </Dialog>
           </div>
 
+          {/* TODO: Add common on-demand skills dynamically */}
           <div className="rounded-lg border p-4 space-y-4">
             <h2 className="text-lg font-bold">Popular Skills</h2>
             <div className="flex flex-wrap gap-2">
@@ -190,7 +194,7 @@ const Proposals = () => {
                 </p>
               </div>
             </TabsWithLoader>
-            {console.log("Applied Proposals", allAppliedProposals)}
+            {/* {console.log("Applied Proposals", allAppliedProposals)} */}
             <TabsWithLoader
               value={"applied"}
               styles={"mt-6 space-y-6 h-full overflow-auto"}

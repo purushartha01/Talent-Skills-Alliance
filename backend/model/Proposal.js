@@ -17,16 +17,22 @@ const ProposalSchema = new mongoose.Schema({
     },
     applicants: [
         {
-            type: mongoose.Types.ObjectId,
-            ref: 'user'
+            applicant: {
+                type: mongoose.Types.ObjectId,
+                ref: 'user'
+            },
+            appliedOn: {
+                type: Date,
+                default: Date.now
+            }
         }
     ],
     skillsRequired: [{
-        skill:{
+        skill: {
             type: String,
             required: true,
         },
-        level:{
+        level: {
             type: String,
             default: 'Beginner'
         }

@@ -129,6 +129,7 @@ const AboutSection = ({ userAboutData, submitChanges }) => {
             bio: bio,
             coverImg: coverFileName,
             profileImg: profileFile,
+            title: professionalTitle,
         };
 
         console.log("About data: ", about);
@@ -275,7 +276,7 @@ const AboutSection = ({ userAboutData, submitChanges }) => {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="title">Professional Title</Label>
+                                <Label htmlFor="title">Professional Title*</Label>
                                 <Input id="title" name="title"
                                     placeholder="e.g. Student, Software Engineer, Data Scientist, etc."
                                     disabled={isSectionDisabled}

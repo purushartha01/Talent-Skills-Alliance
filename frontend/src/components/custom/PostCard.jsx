@@ -6,15 +6,19 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { serverAxiosInstance } from '@/utilities/config'
+import { AuthContext } from '@/context/AuthContext'
 
 const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
 
     const [saved, setSaved] = useState(isSaved);
     const [isLoading, setLoading] = useState(false);
 
-    const handleSave = async(proposalId) => {
+    const currUser = useContext(AuthContext).getCurrAuth();
+    const currUserId = (currUser?._id ?? currUser.id) || null;
+
+    const handleSave = async (proposalId) => {
         setLoading(true);
         console.log("Saved", proposalId)
         await serverAxiosInstance.post('/user/proposal/save', { proposalID: proposalId })
@@ -22,7 +26,7 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
                 // console.log(res.data)
                 if (res.status === 200) {
                     setSaved(true);
-                    setStatusChange((prev)=>prev+1);
+                    setStatusChange((prev) => prev + 1);
                 }
             })
             .catch((err) => {
@@ -32,7 +36,7 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
             })
     }
 
-    const handleUnsave = async(proposalId) => {
+    const handleUnsave = async (proposalId) => {
         console.log("Unsave", proposalId)
         setLoading(true);
         await serverAxiosInstance.post('/user/proposal/unsave', { proposalID: proposalId })
@@ -40,7 +44,7 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
                 if (res.status === 200) {
                     console.log("Withing then()")
                     setSaved(false);
-                    setStatusChange((prev)=>prev+1);
+                    setStatusChange((prev) => prev + 1);
                 }
             })
             .catch((err) => {
@@ -50,14 +54,15 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
             })
     }
 
-    const handleApply = async(proposalId) => {
+    const handleApply = async (proposalId) => {
         console.log("Applied", proposalId)
+
         setLoading(true);
-        await serverAxiosInstance.post('/user/proposal/apply', { proposalID: proposalId })
+        await serverAxiosInstance.post('/user/proposal/apply', { proposalID: proposalId, appliedOn: new Date() })
             .then((res) => {
                 if (res.status === 200) {
                     console.log("Withing then()")
-                    setStatusChange((prev)=>prev+1);
+                    setStatusChange((prev) => prev + 1);
                 }
             })
             .catch((err) => {
@@ -101,11 +106,10 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
                     <CardTitle className="capitalize text-xl mb-2">
                         {post?.proposalTitle}
                     </CardTitle>
-                    <CardDescription className="text-sm text-foreground/90 max-h-[30px] first-letter:capitalize overflow-ellipsis">
+                    <CardDescription className="text-sm text-foreground/90 max-h-[50px] first-letter:capitalize overflow-ellipsis line-clamp-2">
                         {post?.proposalDescription}
                     </CardDescription>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm font-medium">
@@ -205,22 +209,35 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
                     </Button>
                 </div>
 
-                <Button
-                    variant={isApplied ? "outline" : "default"}
-                    size="sm"
-                    className={"flex items-center gap-2"}
-                    onClick={e => { e.preventDefault(); handleApply(post?._id) }}
-                    disabled={isApplied || isLoading}
-                >
-                    {isApplied ? (
-                        <>
-                            <CheckCircle className="h-4 w-4 mr-2 text-primary" />
-                            Applied
-                        </>
+                {
+                    post?.author?._id !== currUserId ? (
+                        <Button
+                            variant={isApplied ? "outline" : "default"}
+                            size="sm"
+                            className={"flex items-center gap-2"}
+                            onClick={e => { e.preventDefault(); handleApply(post?._id) }}
+                            disabled={isApplied || isLoading}
+                        >
+                            {/* {console.log("isApplied", currUserId, post.author)} */}
+                            {isApplied ? (
+                                <>
+                                    <CheckCircle className="h-4 w-4 mr-2 text-primary" />
+                                    Applied
+                                </>
+                            ) : (
+                                "Apply Now"
+                            )}
+                        </Button>
+
                     ) : (
-                        "Apply Now"
-                    )}
-                </Button>
+                        <Badge variant="outline" className="text-sm font-medium text-muted-foreground">
+                            <div className='flex flex-row items-center gap-2'>
+                                <MessageSquare className="h-4 w-4" />
+                                You are the author
+                            </div>
+                        </Badge>
+                    )
+                }
             </CardFooter >
 
         </Card >

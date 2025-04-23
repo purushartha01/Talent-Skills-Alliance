@@ -99,6 +99,12 @@ const AuthNavbar = () => {
                                     </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
+                                    <Link to="/proposals/manage">
+                                        <Folder className="mr-2 h-4 w-4" />
+                                        <span>My Proposals</span>
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
                                     <Link to="/user/teams">
                                         <Folder className="mr-2 h-4 w-4" />
                                         <span>My Teams</span>
@@ -179,6 +185,10 @@ const AuthNavbar = () => {
                                         <Link to="/user/profile" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
                                             <User className="mr-2 h-4 w-4" />
                                             <span>Profile</span>
+                                        </Link>
+                                        <Link to="/proposals/manage" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
+                                            <Folder className="mr-2 h-4 w-4" />
+                                            <span>My Proposals</span>
                                         </Link>
                                         <Link to="/user/teams" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
                                             <Folder className="mr-2 h-4 w-4" />

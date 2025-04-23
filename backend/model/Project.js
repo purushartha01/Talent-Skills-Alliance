@@ -5,7 +5,7 @@ const ProjectSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    author: {
+    teamLeader: {
         type: mongoose.Types.ObjectId,
         ref: 'user',
         required: true
@@ -13,7 +13,6 @@ const ProjectSchema = new mongoose.Schema({
     projectDescription: {
         type: String,
         required: true,
-        minLength: 100
     },
     members: [{
         type: mongoose.Types.ObjectId,
@@ -32,13 +31,36 @@ const ProjectSchema = new mongoose.Schema({
     }],
     skillsUsed: [
         {
-            type: String,
-            required: true
+            skill: {
+                type: String,
+                required: true,
+            },
+            level: {
+                type: String,
+                default: 'Beginner'
+            }
         }
-    ]
+    ],
+    startedOn:{
+        type: Date,
+        default: Date.now()
+    },
+    completedOn:{
+        type: Date,
+        default: null
+    },
+    status: {
+        type: String,
+        enum: ['ongoing', 'completed', 'on-hold'],
+        default: 'on-hold'
+    },
+    timeCommitment: {
+        type: String,
+    },
 }, {
     timestamps: true
 })
+
 
 const ProjectModel=mongoose.model('project',ProjectSchema);
 
