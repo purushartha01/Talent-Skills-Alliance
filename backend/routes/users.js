@@ -19,7 +19,7 @@ userRouter.route('/proposals')
 
 userRouter.route('/proposals/user').get(userController.getUserProposals);
 
-
+userRouter.route('/proposals/:id').get(userController.getProposalById);
 
 userRouter.route('/proposal/save').post(userController.saveProposal);
 
@@ -32,15 +32,17 @@ userRouter.route('/proposal/apply').post(userController.applyProposal);
 
 userRouter.route('/proposal/new').post(userController.createProposal);
 
-userRouter.route('/proposal/:proposalID')
-    .get(userController.getProposal)
-    .put(userController.updateProposal)
+userRouter.route('/proposal/applicant-status').put(userController.changeProposalStatus);
+
+userRouter.route('/proposal/:id')
+    .get(userController.getProposalById)
     .delete(userController.deleteProposal);
 
 
 userRouter.route('/auth/imagekit').get(userController.getImageKitAuth);
 
+
 //TODO: add view profile controller handler
-userRouter.route('/view/:id');
+userRouter.route('/view/:id').get(userController.getUserById);
 
 module.exports = userRouter;

@@ -3,14 +3,17 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, Clock, ExternalLink, MoreHorizontal, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Clock, ExternalLink, MoreHorizontal, Trash, UserRoundCheck, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import ApplicantsCard from './ApplicantsCard';
+import ConFirmationPopup from './ConFirmationPopup';
+import { serverAxiosInstance } from '@/utilities/config';
+import { toast } from 'sonner';
 
-const ManageProposalCard = ({ proposal, status }) => {
+const ManageProposalCard = ({ proposal, setShouldUpdate }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const formatDate = (dateString) => {
@@ -22,13 +25,55 @@ const ManageProposalCard = ({ proposal, status }) => {
         setIsExpanded(prev => !prev);
     }
 
-    return (
 
+    const handleDeleteProposal = (id) => {
+        serverAxiosInstance.delete(`/user/proposal/${id}`)
+            .then((res) => {
+                console.log(res.data);
+                toast.success("Proposal deleted successfully", {
+                    description: "The proposal has been deleted successfully.",
+                    duration: 3000
+                })
+                setShouldUpdate(prev => prev + 1);
+            }
+            ).catch((err) => {
+                console.log(err);
+                toast.error("Error deleting proposal", {
+                    description: "There was an error deleting the proposal. Please try again.",
+                    duration: 3000
+                })
+            }
+            )
+    }
+
+
+    const handleProjectCreation = (id) => {
+        serverAxiosInstance.post(`/project/complete`, { proposalId: id })
+            .then((res) => {
+                console.log(res.data);
+                toast.success("Project created successfully", {
+                    description: "The project has been created successfully.",
+                    duration: 3000
+                })
+                setShouldUpdate(prev => prev + 1);
+            }
+            ).catch((err) => {
+                console.log(err);
+                toast.error("Error creating project", {
+                    description: err?.response?.data?.message || "There was an error creating the project. Please try again.",
+                    duration: 3000
+                })
+            }
+            )
+    }
+
+
+    return (
         <Card className="overflow-hidden">
             <CardHeader className="pb-4">
                 <div className="flex justify-between items-start">
                     <Badge variant={"secondary"} className="text-sm font-normal capitalize">
-                        {status}
+                        {proposal?.proposalStatus === "open" ? "Active" : "Closed"}
                     </Badge>
                     {/* Add dropdowns targets and their contents */}
                     <DropdownMenu modal={false}>
@@ -39,19 +84,25 @@ const ManageProposalCard = ({ proposal, status }) => {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
+
+                            <DropdownMenuItem asChild className="w-full cursor-pointer">
                                 <Link
-                                    href={`/posts/${proposal.id}`}
-                                >View Post</Link>
+                                    to={`/proposals/${proposal._id}`}
+                                >View Post
+                                </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
+                            {/* <DropdownMenuItem asChild className={"cursor-pointer"}>
                                 <Link
                                 // href={`/posts/${proposal.id}/edit`}
                                 >Edit Post</Link>
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Pause Proposal</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Delete Proposal</DropdownMenuItem>
+                            <DropdownMenuItem className="text-destructive cursor-pointer" onClick={() => {
+                                console.log("Delete proposal clicked", proposal);
+                                handleDeleteProposal(proposal._id)
+                            }}>
+                                Delete Proposal
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -111,9 +162,20 @@ const ManageProposalCard = ({ proposal, status }) => {
                             <Users className="h-4 w-4 mr-1" />
                             Looking For
                         </div>
-                        <Badge variant="secondary" className="text-sm capitalize font-semibold">
-                            {proposal?.lookingFor}
-                        </Badge>
+
+                        <div className='flex flex-wrap gap-4'>
+                            {proposal?.lookingFor?.map((role, index) => {
+                                return (
+                                    <Badge
+                                        key={index}
+                                        variant="secondary"
+                                        className={"text-sm capitalize font-semibold"}
+                                    >
+                                        {role}
+                                    </Badge>
+                                )
+                            })}
+                        </div>
                     </div>
                     <div className="space-y-1">
                         <div className="flex flex-col items-start justify-center text-muted-foreground">
@@ -137,9 +199,8 @@ const ManageProposalCard = ({ proposal, status }) => {
 
                         <div className="space-y-3">
                             {proposal?.applicants?.map((applicant) => {
-                                // const applicantStatusInfo = getStatusInfo(applicant.status)
                                 return (
-                                    <ApplicantsCard key={applicant._id} applicant={applicant} />
+                                    <ApplicantsCard key={applicant._id} applicant={applicant} setShouldUpdate={setShouldUpdate} proposalID={proposal?._id} />
                                 )
                             })}
                         </div>
@@ -147,18 +208,22 @@ const ManageProposalCard = ({ proposal, status }) => {
                 )}
             </CardContent>
 
-            <CardFooter className="pt-2">
-                <div className="w-full flex justify-end">
-                    <Button variant="outline" size="sm" asChild>
-                        <Link
-                        // href={`/proposals/${proposal.id}`}
-                        >
-                            View Post
-                            <ExternalLink className="ml-2 h-4 w-4" />
-                        </Link>
-                    </Button>
-                </div>
-            </CardFooter>
+            {
+                proposal?.proposalStatus === "open" && (
+                    <CardFooter className="pt-2">
+                        <div className="w-full flex justify-end">
+                            <ConFirmationPopup
+                                disabled={proposal?.applicants?.length === 0}
+                                triggerTxt={"Finish Selection"}
+                                triggerClass={""}
+                                Icon={UserRoundCheck}
+                                description={`Are you sure you want to finish the selection process for "${proposal?.proposalTitle}"? This action cannot be undone.`}
+                                onConfirm={e => { e.preventDefault(); handleProjectCreation(proposal?._id) }}
+                            />
+                        </div>
+                    </CardFooter>
+                )
+            }
         </Card >
     )
 }

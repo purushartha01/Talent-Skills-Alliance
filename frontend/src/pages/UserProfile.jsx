@@ -26,7 +26,7 @@ const UserProfile = () => {
 
     const user = getCurrAuth();
 
-    const [currTab, setCurrTab] = useState("contact")
+    const [currTab, setCurrTab] = useState("about")
 
     const [isSkillsEditable, setIsSkillsEditable] = useState(false)
     const [isContactEditable, setIsContactEditable] = useState(false);
@@ -86,7 +86,7 @@ const UserProfile = () => {
     }
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <div className="container mx-auto px-4 py-8 max-w-5xl mb-20">
             <div className="flex flex-col space-y-8">
                 <div className="flex flex-col justify-center">
                     <h1 className="text-3xl font-bold">Edit Profile</h1>

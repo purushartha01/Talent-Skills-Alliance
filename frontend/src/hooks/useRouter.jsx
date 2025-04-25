@@ -9,8 +9,10 @@ import { AuthContext } from '@/context/AuthContext';
 import NotFound from '@/pages/NotFound';
 import UserProfile from '@/pages/UserProfile';
 import Settings from '@/pages/Settings';
-import UserTeams from '@/pages/UserTeams';
 import ManageProposals from '@/pages/ManageProposals';
+import ViewUserProfile from '@/pages/ViewUserProfile';
+import ViewProposal from '@/pages/ViewProposal';
+import UserProjects from '@/pages/UserProjects';
 
 
 const useMyRouter = () => {
@@ -46,6 +48,11 @@ const useMyRouter = () => {
                     path: '/proposals/manage',
                     element: <ManageProposals />,
                 },
+                {
+                    
+                    path: '/proposals/:id',
+                    element: <ViewProposal />,
+                }
             ],
         },
         {
@@ -59,8 +66,12 @@ const useMyRouter = () => {
                     element: <Settings />,
                 },
                 {
-                    path: '/user/teams',
-                    element: <UserTeams />
+                    path: '/user/projects',
+                    element: <UserProjects />
+                },
+                {
+                    path: '/user/:id',
+                    element: <ViewUserProfile/>
                 }
             ]
         }

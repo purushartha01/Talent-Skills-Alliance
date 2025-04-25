@@ -16,6 +16,4 @@ const Footer = () => {
   )
 }
 
-export default Footer;
-
-// Ensure the parent container of the Footer has enough content height or use `overflow-y-auto` on the parent container to allow scrolling without affecting the sticky footer.
+export default Footer

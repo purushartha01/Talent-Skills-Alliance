@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const ProjectSchema = new mongoose.Schema({
     projectTitle: {
         type: String,
@@ -22,11 +23,9 @@ const ProjectSchema = new mongoose.Schema({
     links: [{
         title: {
             type: String,
-            required: true,
         },
         urlString: {
             type: String,
-            required: true,
         }
     }],
     skillsUsed: [
@@ -56,6 +55,11 @@ const ProjectSchema = new mongoose.Schema({
     },
     timeCommitment: {
         type: String,
+    },
+    associatedWith: {
+        type: mongoose.Types.ObjectId,
+        ref: 'proposal',
+        required: true  
     },
 }, {
     timestamps: true

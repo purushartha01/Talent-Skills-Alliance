@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import ManageProposalCard from '@/components/custom/ManageProposalCard';
 import { toast } from 'sonner';
 import { serverAxiosInstance } from '@/utilities/config';
+import { set } from 'date-fns';
 
 const ManageProposals = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -15,20 +16,30 @@ const ManageProposals = () => {
     const [shouldUpdate, setShouldUpdate] = useState(0);
 
     const [proposalList, setProposalList] = useState([]);
-    const [visibleProposals, setVisibleProposals] = useState(proposalList);
-
-    const [activeProposal, setActiveProposal] = useState(null);
-
-    const handleProposalSelect = (proposal) => {
-        setActiveProposal(proposal);
-    };
+    const [filteredProposalList, setFilteredProposalList] = useState([]);
 
     const [searchQuery, setSearchQuery] = useState('');
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
+        if (event.target.value.length === 0) {
+            setFilteredProposalList(proposalList);
+        }
     };
+    
     const handleSearchOperation = (e) => {
-
+        e.preventDefault();
+        if (searchQuery.length > 0) {
+            const filteredProposals = proposalList.filter((proposal) => {
+                return proposal?.proposalTitle?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    proposal?.proposalDescription?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    proposal?.skillsRequired?.some((skill) => skill?.skill?.toLowerCase().includes(searchQuery.toLowerCase()));
+            });
+            console.log(filteredProposals);
+            setFilteredProposalList(filteredProposals);
+        }
+        else {
+            setProposalList(proposalList);
+        }
     }
 
 
@@ -41,7 +52,7 @@ const ManageProposals = () => {
                     if (res.status === 200) {
                         // console.log(res.data);
                         setProposalList(res.data.foundUserProposals);
-                        setVisibleProposals(res.data.foundUserProposals);
+                        setFilteredProposalList(res.data.foundUserProposals);
                         setIsLoading(false);
                     }
                 })
@@ -57,10 +68,6 @@ const ManageProposals = () => {
                 })
         }
         fetchProposals();
-    }, [])
-
-    useEffect(() => {
-
     }, [shouldUpdate])
 
     return (
@@ -83,7 +90,7 @@ const ManageProposals = () => {
                             <Button
                                 variant="ghost"
                                 className="absolute right-0 top-0 text-muted-foreground"
-                                onClick={e => { e.preventDefault(); setSearchQuery('') }}
+                                onClick={e => { e.preventDefault(); setSearchQuery(''); setFilteredProposalList(proposalList); }}
                             >
                                 <X className="h-full w-4" />
                             </Button>
@@ -139,10 +146,9 @@ const ManageProposals = () => {
 
                     <div className='space-y-2 pb-20'>
                         {
-                            visibleProposals.map((proposal, index) => {
-                                const status = proposal?.applicationDeadline < new Date().toISOString() ? "closed" : "open";
+                            filteredProposalList.map((proposal, index) => {
                                 return (
-                                    <ManageProposalCard proposal={proposal} key={index} status={status} />
+                                    <ManageProposalCard proposal={proposal} key={index} setShouldUpdate={setShouldUpdate} />
                                 )
                             })
                         }

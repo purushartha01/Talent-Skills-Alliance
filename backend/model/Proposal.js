@@ -24,6 +24,11 @@ const ProposalSchema = new mongoose.Schema({
             appliedOn: {
                 type: Date,
                 default: Date.now
+            },
+            status: {
+                type: String,
+                enum: ["accepted", "rejected", "undetermined"],
+                default: "undetermined"
             }
         }
     ],
@@ -52,6 +57,11 @@ const ProposalSchema = new mongoose.Schema({
     duration: {
         type: String,
         required: true,
+    },
+    proposalStatus: {
+        type: String,
+        enum: ['open', 'closed'],
+        default: 'open'
     },
 }, {
     timestamps: true

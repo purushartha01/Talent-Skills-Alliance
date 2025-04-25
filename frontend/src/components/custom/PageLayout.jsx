@@ -16,7 +16,7 @@ const PageLayout = () => {
             <div className='flex flex-grow'>
                 <Outlet />
             </div>
-            <Footer />
+            {/* <Footer /> */}
         </div>
     )
 }

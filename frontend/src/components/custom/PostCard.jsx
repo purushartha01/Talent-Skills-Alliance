@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Bookmark, BookmarkCheck, Calendar, CheckCircle, Clock, Loader, MessageSquare, Send, Users } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Calendar, CheckCircle, Clock, ExternalLink, Loader, MessageSquare, Send, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useContext, useState } from 'react'
 import { serverAxiosInstance } from '@/utilities/config'
 import { AuthContext } from '@/context/AuthContext'
+import { Link } from 'react-router-dom'
 
 const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
 
@@ -191,53 +192,46 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
                                 )}
                             </div>
                         )}
-
-                        {/* {isLoading ? (
-                            <div className="animate-spin h-4 w-4 border-2 border-primary rounded-full border-t-transparent"></div>
-                        ) : 
-                        ({isSaved ? (
-                            <div>
-                                <BookmarkCheck className="h-4 w-4 text-primary" />
-                                Unsave
-                            </div>
-                        ) : (
-                            <div>
-                                <Bookmark className="h-4 w-4" />
-                                Save
-                            </div>
-                        ))} */}
                     </Button>
                 </div>
+                <div className='w-full flex flex-row justify-end gap-2'>
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                        <Link to={`/proposals/${post?._id}`} className="flex items-center gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            View Proposal
+                        </Link>
+                    </Button>
 
-                {
-                    post?.author?._id !== currUserId ? (
-                        <Button
-                            variant={isApplied ? "outline" : "default"}
-                            size="sm"
-                            className={"flex items-center gap-2"}
-                            onClick={e => { e.preventDefault(); handleApply(post?._id) }}
-                            disabled={isApplied || isLoading}
-                        >
-                            {/* {console.log("isApplied", currUserId, post.author)} */}
-                            {isApplied ? (
-                                <>
-                                    <CheckCircle className="h-4 w-4 mr-2 text-primary" />
-                                    Applied
-                                </>
-                            ) : (
-                                "Apply Now"
-                            )}
-                        </Button>
+                    {
+                        post?.author?._id !== currUserId ? (
+                            <Button
+                                variant={isApplied ? "outline" : "default"}
+                                size="sm"
+                                className={"flex items-center gap-2"}
+                                onClick={e => { e.preventDefault(); handleApply(post?._id) }}
+                                disabled={isApplied || isLoading}
+                            >
+                                {/* {console.log("isApplied", currUserId, post.author)} */}
+                                {isApplied ? (
+                                    <>
+                                        <CheckCircle className="h-4 w-4 mr-2 text-primary" />
+                                        Applied
+                                    </>
+                                ) : (
+                                    "Apply Now"
+                                )}
+                            </Button>
 
-                    ) : (
-                        <Badge variant="outline" className="text-sm font-medium text-muted-foreground">
-                            <div className='flex flex-row items-center gap-2'>
-                                <MessageSquare className="h-4 w-4" />
-                                You are the author
-                            </div>
-                        </Badge>
-                    )
-                }
+                        ) : (
+                            <Badge variant="outline" className="text-sm font-medium text-muted-foreground">
+                                <div className='flex flex-row items-center gap-2'>
+                                    <MessageSquare className="h-4 w-4" />
+                                    You are the author
+                                </div>
+                            </Badge>
+                        )
+                    }
+                </div>
             </CardFooter >
 
         </Card >

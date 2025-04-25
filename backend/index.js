@@ -10,9 +10,15 @@ const { connectToDb } = require('./config/dbConfig');
 const { errorHandler } = require('./middlewares/errorHandler');
 const auths = require('./routes/auths');
 const users = require('./routes/users');
+const projects = require('./routes/projects');
 
 //variables
 const app = express();
+
+
+// TODO: create user flow from signup->login->profile_update (MOST IMPORTANT);
+// TODO: remove the update auth option from signup route and frontend too, it may cause issues in the future
+
 
 
 //middlewares
@@ -34,6 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 //routes
 app.use('/api/v1/auth', auths)
 app.use('/api/v1/user', users)
+app.use('/api/v1/project', projects)
 
 
 

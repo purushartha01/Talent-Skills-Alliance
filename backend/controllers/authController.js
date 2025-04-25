@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
 
 // const UserModel = require("../model/User");
-const { userExists, createNewUser, updateUserByEmail, findUserByEmail } = require("../services/UserService");
+const { userExists, updateUserByEmail, findUserByEmail } = require("../services/UserService");
 const { ACCESS_KEY, jwt_options_refresh, jwt_options_access, REFRESH_KEY, cookieOptionsAccess, cookieOptionsRefresh } = require('../config/serverConfig');
 const { sendWelcomeMail, sendOTP } = require('../services/MailingService');
 const OTPModel = require('../model/OTP');
 const { generateUniqueOTP } = require('../utitlity/utitlityFunctions');
+const UserModel = require('../model/User');
 
 const loginActionHandler = async (req, res, next) => {
     try {
@@ -65,7 +66,7 @@ const signupActionHandler = async (req, res, next) => {
             res.locals.statusCode = 409;
             throw new Error("User already exists");
         }
-        const newUser = await createNewUser(username, email, password);
+        const newUser = await UserModel.create({ username, email, password });
 
         // let otpFound = await OTPModel.exists({ email });
         // let isOTPCreated = undefined;
@@ -76,9 +77,14 @@ const signupActionHandler = async (req, res, next) => {
         // }
 
         console.log("Boolean user created: ", newUser);
+        const sensitiveData = ['password', 'createdAt', 'updatedAt', '__v'];
+        const user = Object.fromEntries(
+            Object.entries(newUser.toObject()).filter(([key]) => !sensitiveData.includes(key))
+        );
+
         if (newUser) {
             await sendWelcomeMail(username, email);
-            res.status(200).json({ status: 'success', message: "Registration successfully completed!", userData: { username, email, id: newUser.id } })
+            res.status(200).json({ status: 'success', message: "Registration successfully completed!", userData: user })
         } else {
             res.locals.statusCode = 500;
             throw new Error("Failed to create new user");
@@ -98,12 +104,12 @@ const generateOTP = async (req, res, next) => {
         const { email } = req.body;
         console.log("Email: ", email);
 
-        const doesUserExist = await userExists(email);
-        console.log(`DoesUserExist: ${doesUserExist}`);
-        if (doesUserExist) {
-            res.locals.statusCode = 409;
-            throw new Error("User already exists");
-        }
+        // const doesUserExist = await userExists(email);
+        // console.log(`DoesUserExist: ${doesUserExist}`);
+        // if (doesUserExist) {
+        //     res.locals.statusCode = 409;
+        //     throw new Error("User already exists");
+        // }
 
         let otpFound = await OTPModel.findOne({ email });
         if (!otpFound) {

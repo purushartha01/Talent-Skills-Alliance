@@ -1,11 +1,11 @@
 const UserModel = require("../model/User")
 
-const createNewUser = async (username, email, password) => {
-    const createdUser = await UserModel.create({ username, email, password });
-    if (!createdUser) return false;
-    console.log("created user: ", createdUser);
-    return true;
-}
+// const createNewUser = async (username, email, password) => {
+//     const createdUser = await UserModel.create({ username, email, password });
+//     if (!createdUser) return false;
+//     console.log("created user: ", createdUser);
+//     return true;
+// }
 
 const findUserByUsername = async (username) => {
     return await UserModel.findOne({ username: username });
@@ -34,6 +34,7 @@ const removeUserById = async (id) => {
     return removedUser;
 }
 
+
 module.exports = {
-    findAllUsers, findUserByEmail, findUserByUsername, userExists, createNewUser, updateUserByEmail, removeUserById
+    findAllUsers, findUserByEmail, findUserByUsername, userExists, updateUserByEmail, removeUserById
 }

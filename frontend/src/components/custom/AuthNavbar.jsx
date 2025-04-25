@@ -92,33 +92,33 @@ const AuthNavbar = () => {
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuGroup>
-                                <DropdownMenuItem asChild>
+                                <DropdownMenuItem asChild className={"cursor-pointer"}>
                                     <Link to="/user/profile">
                                         <User className="mr-2 h-4 w-4" />
                                         <span>Profile</span>
                                     </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
+                                <DropdownMenuItem asChild className={"cursor-pointer"}>
                                     <Link to="/proposals/manage">
                                         <Folder className="mr-2 h-4 w-4" />
                                         <span>My Proposals</span>
                                     </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link to="/user/teams">
+                                <DropdownMenuItem asChild className={"cursor-pointer"}>
+                                    <Link to="/user/projects">
                                         <Folder className="mr-2 h-4 w-4" />
-                                        <span>My Teams</span>
+                                        <span>My Projects</span>
                                     </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
+                                {/* <DropdownMenuItem asChild className={"cursor-pointer"}>
                                     <Link to="/user/settings">
                                         <Settings className="mr-2 h-4 w-4" />
                                         <span>Settings</span>
                                     </Link>
-                                </DropdownMenuItem>
+                                </DropdownMenuItem> */}
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive/100" onClick={handleLogout}>
+                            <DropdownMenuItem className="text-destructive/100 cursor-pointer" onClick={handleLogout} >
                                 <LogOut className="mr-2 h-4 w-4" />
                                 <span>Log out</span>
                             </DropdownMenuItem>
@@ -190,14 +190,14 @@ const AuthNavbar = () => {
                                             <Folder className="mr-2 h-4 w-4" />
                                             <span>My Proposals</span>
                                         </Link>
-                                        <Link to="/user/teams" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
+                                        <Link to="/user/projects" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
                                             <Folder className="mr-2 h-4 w-4" />
-                                            <span>My Teams</span>
+                                            <span>My Projects</span>
                                         </Link>
-                                        <Link to="/user/settings" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
+                                        {/* <Link to="/user/settings" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
                                             <Settings className="mr-2 h-4 w-4" />
                                             <span>Settings</span>
-                                        </Link>
+                                        </Link> */}
                                         {/* TODO: Add user logout functionality */}
                                         <Link to="#" className="flex flex-row items-center mb-2 text-destructive/100 hover:bg-gray-300" onClick={e => { closeDrawer(); handleLogout(); }}>
                                             <LogOut className="mr-2 h-4 w-4" />

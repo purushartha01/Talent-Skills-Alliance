@@ -20,6 +20,7 @@ import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 
+
 // TODO: Add filter for proposals based on the user's skills and interests, as well as the proposal's status (open, closed, etc.), and some common filters like "recent", "popular", etc.
 
 const Proposals = () => {
@@ -45,8 +46,17 @@ const Proposals = () => {
           .get("/user/proposals")
           .then((response) => {
             if (response.status === 200) {
-              const proposals = response.data.foundProposals;
-              const savedProposals = response.data.savedProposals;
+              console.log("Fetched Proposals: ", response.data);
+              // Filter proposals based on the user's skills and interests
+
+              
+
+              const proposals = response.data.foundProposals.filter((proposal)=>
+                proposal.proposalStatus === "open" && proposal.applicationDeadline >new Date().toISOString()
+              );
+              const savedProposals = response.data.savedProposals.filter((proposal)=>{
+                return proposal.proposalStatus === "open" && proposal.applicationDeadline > new Date().toISOString()
+              });
               setAllSavedProposals(savedProposals);
               setAllProposals(proposals);
               setAllAppliedProposals(
