@@ -34,7 +34,14 @@ const ReviewSchema = new mongoose.Schema({
         type: Date,
         default: Date.now()
     },
-
+    isProcessed:{
+        type: Boolean,
+        default: false
+    },
+    isAnonymous:{
+        type: Boolean,
+        default: false
+    },
 },
     {
         timestamps: true
