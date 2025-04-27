@@ -13,6 +13,7 @@ import ManageProposals from '@/pages/ManageProposals';
 import ViewUserProfile from '@/pages/ViewUserProfile';
 import ViewProposal from '@/pages/ViewProposal';
 import UserProjects from '@/pages/UserProjects';
+import ForgotPassword from '@/pages/ForgotPassword';
 
 
 const useMyRouter = () => {
@@ -34,6 +35,10 @@ const useMyRouter = () => {
             path: '/signup',
             element: <Signup />
         },
+        {
+            path: '/forgot-password',
+            element: <ForgotPassword />
+        }
     ];
 
     const protectedRoutes = [
@@ -49,7 +54,7 @@ const useMyRouter = () => {
                     element: <ManageProposals />,
                 },
                 {
-                    
+
                     path: '/proposals/:id',
                     element: <ViewProposal />,
                 }
@@ -71,7 +76,7 @@ const useMyRouter = () => {
                 },
                 {
                     path: '/user/:id',
-                    element: <ViewUserProfile/>
+                    element: <ViewUserProfile />
                 }
             ]
         }

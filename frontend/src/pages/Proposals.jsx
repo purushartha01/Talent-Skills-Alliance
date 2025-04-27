@@ -17,6 +17,7 @@ import { serverAxiosInstance } from "@/utilities/config";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { ClockAlert, PlusCircle, Search, Users } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 
@@ -28,6 +29,9 @@ const Proposals = () => {
   const currUser = getCurrAuth();
   const currUserId = currUser.id ?? currUser._id;
 
+  const navigate = useNavigate();
+
+
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [needsReload, setNeedsReload] = useState(0);
@@ -36,6 +40,21 @@ const Proposals = () => {
   const [allFilteredProposals, setAllFilteredProposals] = useState([]);
   const [allSavedProposals, setAllSavedProposals] = useState([]);
   const [allAppliedProposals, setAllAppliedProposals] = useState([]);
+
+
+
+  
+  useEffect(() => {
+    if (!currUser?.about) {
+      toast.error("Incomplete Profile", {
+        description: "You need to complete your profile to access all features",
+        duration: 5000,
+      });
+      navigate("/user/profile");
+    }
+  }, [currUser, navigate]);
+
+
 
   // Fetch all proposals from the server on page load
   useEffect(() => {
@@ -49,19 +68,19 @@ const Proposals = () => {
               console.log("Fetched Proposals: ", response.data);
               // Filter proposals based on the user's skills and interests
 
-              
 
-              const proposals = response.data.foundProposals.filter((proposal)=>
-                proposal.proposalStatus === "open" && proposal.applicationDeadline >new Date().toISOString()
+
+              const proposals = response.data.foundProposals.filter((proposal) =>
+                proposal.proposalStatus === "open" && proposal.applicationDeadline > new Date().toISOString()
               );
-              const savedProposals = response.data.savedProposals.filter((proposal)=>{
+              const savedProposals = response.data.savedProposals.filter((proposal) => {
                 return proposal.proposalStatus === "open" && proposal.applicationDeadline > new Date().toISOString()
               });
               setAllSavedProposals(savedProposals);
               setAllProposals(proposals);
               setAllAppliedProposals(
                 proposals.filter((proposal) =>
-                  proposal.applicants.some((applicant) => applicant?.applicant?._id=== currUserId)
+                  proposal.applicants.some((applicant) => applicant?.applicant?._id === currUserId)
                 )
               );
             }
@@ -78,6 +97,8 @@ const Proposals = () => {
     };
     fetchAllProposals();
   }, [needsReload, currUserId]);
+
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl h-[82vh] flex flex-1">
@@ -146,7 +167,7 @@ const Proposals = () => {
           </div>
 
           {/* TODO: Add common on-demand skills dynamically */}
-          <div className="rounded-lg border p-4 space-y-4">
+          {/* <div className="rounded-lg border p-4 space-y-4">
             <h2 className="text-lg font-bold">Popular Skills</h2>
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary">React</Badge>
@@ -158,7 +179,7 @@ const Proposals = () => {
               <Badge variant="secondary">DevOps</Badge>
               <Badge variant="secondary">Mobile</Badge>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* main content */}

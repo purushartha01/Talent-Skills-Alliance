@@ -1,16 +1,23 @@
 import { Button } from '@/components/ui/button'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Loader, Search, X } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import ManageProposalCard from '@/components/custom/ManageProposalCard';
 import { toast } from 'sonner';
 import { serverAxiosInstance } from '@/utilities/config';
-import { set } from 'date-fns';
+import { AuthContext } from '@/context/AuthContext';
 
 const ManageProposals = () => {
+
+    const navigate = useNavigate();
+    const { getCurrAuth } = useContext(AuthContext);
+
+    const currAuth = getCurrAuth();
+
+
     const [isLoading, setIsLoading] = useState(false);
 
     const [shouldUpdate, setShouldUpdate] = useState(0);
@@ -25,7 +32,7 @@ const ManageProposals = () => {
             setFilteredProposalList(proposalList);
         }
     };
-    
+
     const handleSearchOperation = (e) => {
         e.preventDefault();
         if (searchQuery.length > 0) {
@@ -41,6 +48,18 @@ const ManageProposals = () => {
             setProposalList(proposalList);
         }
     }
+
+
+    
+    useEffect(() => {
+        if (!currAuth?.about) {
+            toast.error("Incomplete profile.", {
+                description: "Please complete your profile to access all features.",
+                duration: 3000,
+            });
+            navigate("/user/profile");
+        }
+    }, [currAuth, navigate]);
 
 
     useEffect(() => {
@@ -69,6 +88,7 @@ const ManageProposals = () => {
         }
         fetchProposals();
     }, [shouldUpdate])
+
 
     return (
         <div className="flex flex-col md:flex-row gap-6 flex-1 h-[80vh] p-8" >

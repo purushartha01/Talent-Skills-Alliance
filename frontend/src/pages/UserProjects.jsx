@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { AuthContext } from '@/context/AuthContext';
 import { set } from 'date-fns';
 import ProjectCard from '@/components/custom/ProjectCard';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -20,6 +21,8 @@ const UserProjects = () => {
 
     const currUser = useContext(AuthContext).getCurrAuth();
     const currUserId = currUser?.userId ?? currUser?._id;
+
+    const navigate = useNavigate();
 
 
     const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +34,18 @@ const UserProjects = () => {
     const [allProposedProjects, setAllProposedProjects] = useState([]);
     const [allProjects, setAllProjects] = useState([]);
 
+
+
+
+    useEffect(() => {
+        if (!currUser?.about) {
+            toast.error("Incomplete profile.", {
+                description: "Please complete your profile to access all features.",
+                duration: 3000,
+            });
+            navigate("/user/profile");
+        }
+    }, [currUser, navigate]);
 
     useEffect(() => {
 
@@ -49,10 +64,10 @@ const UserProjects = () => {
 
 
                         setIsLoading(false);
-                        toast.success('Projects fetched successfully!', {
-                            description: 'You can now view your projects.',
-                            duration: 2000,
-                        });
+                        // toast.success('Projects fetched successfully!', {
+                        //     description: 'You can now view your projects.',
+                        //     duration: 2000,
+                        // });
                     }
                 })
                 .catch((err) => {
@@ -65,6 +80,9 @@ const UserProjects = () => {
         fetchProjects();
 
     }, [shouldUpdate]);
+
+
+
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);

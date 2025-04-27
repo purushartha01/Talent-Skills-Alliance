@@ -3,9 +3,29 @@ import { ArrowRight, Code, MessageSquare, Users, Zap } from "lucide-react"
 import landing from '@/assets/landing.svg'
 // import github from '@/assets/github.svg';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext, useEffect } from "react";
+import { toast } from "sonner";
 
 const Home = () => {
+
+  const { getCurrAuth } = useContext(AuthContext);
+  const currAuth = getCurrAuth();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!currAuth?.about) {
+      toast.error("Incomplete profile.", {
+        description: "Please complete your profile to access all features.",
+        duration: 3000,
+      });
+      navigate("/user/profile");
+    }
+  }, [currAuth, navigate]);
+
+
   return (
     <div className="min-h-[90dvh] w-full flex flex-col">
       <main className="flex-1">

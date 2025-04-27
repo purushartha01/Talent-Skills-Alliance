@@ -9,7 +9,7 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { EyeClosedIcon, EyeIcon, Info, Loader2 } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { set, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from './../../../node_modules/@hookform/resolvers/zod/src/zod';
@@ -30,6 +30,11 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+
+  const [isProfileComplete, setIsProfileComplete] = useState(false);
+
 
   const formSchema = z.object({
     email: z.string().email({ message: 'Invalid email address' }),
@@ -58,7 +63,16 @@ const Login = () => {
           description: "You have successfully logged in",
         });
         setCurrAuth(res.data.user);
-        navigate("/")
+        if (!res.data?.user?.about) {
+          toast.message("Incomplete Profile", {
+            description: "Please complete your profile to access all features",
+            duration: 5000,
+          });
+          setIsProfileComplete(false);
+        } else {
+          setIsProfileComplete(true);
+        }
+        setShouldRedirect(true);
       })
       .catch((err) => {
         logStatements("Login Error", err);
@@ -70,6 +84,16 @@ const Login = () => {
         setIsLoading(false);
       });
   }
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      if (isProfileComplete) {
+        navigate("/");
+      } else {
+        navigate("/user/profile");
+      }
+    }
+  }, [shouldRedirect, navigate, isProfileComplete]);
 
 
   const [showPassword, setShowPassword] = useState(false);
@@ -152,7 +176,7 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" onClick={(e) => console.log()} disabled={form.formState.isValid ? false : true} className={`w-3/4 bg-blue-500 text-white hover:bg-blue-600`}>
+              <Button type="submit" onClick={(e) => console.log()} disabled={form.formState.isValid ? false : true} className={`w-3/4 mb-2`}>
                 {isLoading ? <div className="w-full flex items-center justify-center">
                   <Loader2 className="animate-spin mr-2" size={16} /> Logging In...
                 </div> :

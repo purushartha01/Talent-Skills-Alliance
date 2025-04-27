@@ -92,7 +92,7 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
 
     return (
         <Dialog modal={false} open={isDialogOpen} onOpenChange={() => { setIsDialogOpen(); setOtp("") }}>
-            <DialogTrigger asChild className="absolute right-1 top-1/2 transform -translate-y-1/2 cursor-pointer">
+            <DialogTrigger asChild className={`absolute right-1 top-1/2 transform -translate-y-1/2 cursor-pointer ${isEmailVerified && "pointer-events-none"}`}>
                 {isEmailVerified ? <Check size={30} className=" text-green-700" /> : <Button disabled={!isEmailValid} type="button">Verify</Button>}
             </DialogTrigger>
             <DialogHeader className="flex flex-col items-center justify-center">

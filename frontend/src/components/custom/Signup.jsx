@@ -5,13 +5,12 @@ import { z } from "zod"
 import { useContext, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod/src/zod"
-import { EyeClosedIcon, EyeIcon } from "lucide-react"
+import { EyeClosedIcon, EyeIcon, Loader, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../ui/button"
 import CustomTooltip from "./CustomTooltip"
 import OTPComponent from "./OTPComponent"
 import { serverAxiosInstance } from "@/utilities/config"
-import { AuthContext } from "@/context/AuthContext"
 
 const Signup = () => {
 
@@ -33,9 +32,9 @@ const Signup = () => {
 
 
   const navigate = useNavigate();
-  const { setCurrAuth, getCurrAuth } = useContext(AuthContext);
+  // const { setCurrAuth, getCurrAuth } = useContext(AuthContext);
 
-  const currAuth = getCurrAuth();
+  // const currAuth = getCurrAuth();
 
   const signupFormSchema = z.object({
     username: z.string().min(2, { message: "Name is required" }),
@@ -63,6 +62,9 @@ const Signup = () => {
 
 
   const onSubmit = (data) => {
+    if (isFormSubmitting) return;
+    setIsFormSubmitting(true);
+
     const { username, email, password } = data;
     serverAxiosInstance.post("/auth/register", { username, email, password }).then((res) => {
       if (res.status === 200) {
@@ -70,7 +72,7 @@ const Signup = () => {
           description: "You have successfully signed up",
         });
         form.reset();
-        setCurrAuth(res.data.userData);
+        // setCurrAuth(res.data.userData);
         setShouldRedirect(true);
       }
     }).catch((err) => {
@@ -79,6 +81,8 @@ const Signup = () => {
         cancelable: true,
       });
       form.reset();
+    }).finally(() => {
+      setIsFormSubmitting(false);
     })
   }
 
@@ -89,7 +93,7 @@ const Signup = () => {
   useEffect(() => { setIsEmailVerified(false) }, [email])
   useEffect(() => {
     if (shouldRedirect) {
-      navigate("/user/profile");
+      navigate("/login");
     }
   }, [shouldRedirect, navigate]);
 
@@ -185,7 +189,16 @@ const Signup = () => {
                   </FormControl>
                 </FormItem>
               )} />
-              <Button type="submit" disabled={!form.formState.isValid || !isEmailVerified} className="w-3/4 mb-2">Signup</Button>
+              <Button type="submit" disabled={!form.formState.isValid || !isEmailVerified} className="w-3/4 mb-2">
+                {console.log(isFormSubmitting)}
+                {isFormSubmitting ?
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="animate-spin h-4 w-4 mr-3" />
+                    Signing up...
+                  </span>
+                  : <span>Signup</span>
+                }
+              </Button>
             </form>
           </Form>
         </CardContent>
