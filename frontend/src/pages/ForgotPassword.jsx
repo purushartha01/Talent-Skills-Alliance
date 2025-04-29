@@ -79,8 +79,6 @@ const ForgotPassword = () => {
             } else {
                 navigate("/", { replace: true });
             }
-        } else {
-            navigate("/login", { replace: true });
         }
     }, [user, navigate])
 
