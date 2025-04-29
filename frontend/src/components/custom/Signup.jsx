@@ -11,6 +11,7 @@ import { Button } from "../ui/button"
 import CustomTooltip from "./CustomTooltip"
 import OTPComponent from "./OTPComponent"
 import { serverAxiosInstance } from "@/utilities/config"
+import { AuthContext } from "@/context/AuthContext"
 
 const Signup = () => {
 
@@ -32,9 +33,9 @@ const Signup = () => {
 
 
   const navigate = useNavigate();
-  // const { setCurrAuth, getCurrAuth } = useContext(AuthContext);
+  const { getCurrAuth } = useContext(AuthContext);
 
-  // const currAuth = getCurrAuth();
+  const user = getCurrAuth();
 
   const signupFormSchema = z.object({
     username: z.string().min(2, { message: "Name is required" }),
@@ -89,6 +90,19 @@ const Signup = () => {
   const email = form.watch("email");
   const emailSchema = z.string().email({ message: "Invalid email address" })
   const isEmailValid = emailSchema.safeParse(email).success;
+
+
+
+  useEffect(() => {
+    if (user) {
+      if (window.history.length > 2) {
+        navigate(-1);
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [user, navigate]);
+
 
   useEffect(() => { setIsEmailVerified(false) }, [email])
   useEffect(() => {

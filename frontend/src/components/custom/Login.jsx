@@ -14,7 +14,7 @@ import { set, z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from './../../../node_modules/@hookform/resolvers/zod/src/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, replace, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import CustomTooltip from "./CustomTooltip";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
@@ -26,7 +26,8 @@ import { AuthContext } from "@/context/AuthContext";
 
 const Login = () => {
 
-  const { setCurrAuth } = useContext(AuthContext);
+  const { setCurrAuth, getCurrAuth } = useContext(AuthContext);
+  const user = getCurrAuth();
   const navigate = useNavigate();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -84,6 +85,19 @@ const Login = () => {
         setIsLoading(false);
       });
   }
+
+
+  useEffect(() => {
+    if (user) {
+      if (window.history.length > 2) {
+        navigate(-1);
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [user, navigate])
+
+
 
   useEffect(() => {
     if (shouldRedirect) {
