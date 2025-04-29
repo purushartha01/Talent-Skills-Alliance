@@ -88,7 +88,7 @@ const Login = () => {
 
 
   useEffect(() => {
-    if (user) {
+    if (Object.keys(user).length > 0) {
       if (window.history.length > 2) {
         navigate(-1);
       } else {

@@ -1,11 +1,13 @@
 import OTPComponent from "@/components/custom/OTPComponent";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { z } from "zod";
 import { set } from 'date-fns';
 import { Button } from "@/components/ui/button";
 import { CrossIcon, Eye, EyeClosed, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@/context/AuthContext";
 
 
 const EmailSchema = z.object({
@@ -27,6 +29,13 @@ const PasswordSchema = z.object({
 
 
 const ForgotPassword = () => {
+
+    const navigate = useNavigate();
+
+    const user = useContext(AuthContext).getCurrAuth();
+
+
+
     const [email, setEmail] = useState("");
     const [isEmailValid, setIsEmailValid] = useState(false);
 
@@ -62,6 +71,18 @@ const ForgotPassword = () => {
 
 
 
+    useEffect(() => {
+        if (Object.keys(user).length > 0) {
+            console.log("User is logged in, redirecting to home page");
+            if (window.history.length > 2) {
+                navigate(-1);
+            } else {
+                navigate("/", { replace: true });
+            }
+        } else {
+            navigate("/login", { replace: true });
+        }
+    }, [user, navigate])
 
     return (
         <div className="flex flex-col justify-center items-center h-[82vh] w-full">
