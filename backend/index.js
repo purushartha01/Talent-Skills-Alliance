@@ -20,7 +20,6 @@ const app = express();
 // TODO: remove the update auth option from signup route and frontend too, it may cause issues in the future
 
 
-
 //middlewares
 app.use(logger);
 app.use(cors(

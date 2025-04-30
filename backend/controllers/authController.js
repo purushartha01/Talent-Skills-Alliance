@@ -165,6 +165,38 @@ const handleOTPVerification = async (req, res, next) => {
     }
 }
 
+const forgotPasswordActionHandler = async (req, res, next) => {
+    try {
+        console.log('Processing forgot password request');
+        if (Object.keys(req.body).length === 0 || !req.body.email || !req.body.password) {
+            res.locals.statusCode = 422;
+            throw new Error("Request body or its members not found");
+        }
+
+        const { email, password } = req.body;
+
+        console.log("Email: ", email, " Password: ", password);
+
+
+        const user = await UserModel.findOne({ email });
+        if (!user) {
+            res.locals.statusCode = 404;
+            throw new Error("User not found");
+        }
+
+        user.password = password;
+
+        console.log("User: ", user);
+
+        await user.save();
+
+        res.status(200).json({ status: 'success', message: 'Password updated successfully' });
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
+
 module.exports = {
-    loginActionHandler, signupActionHandler, generateOTP, handleOTPVerification
+    loginActionHandler, signupActionHandler, generateOTP, handleOTPVerification, forgotPasswordActionHandler
 }

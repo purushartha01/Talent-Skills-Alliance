@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { CrossIcon, Eye, EyeClosed, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
+import { serverAxiosInstance } from "@/utilities/config";
+import { toast } from "sonner";
 
 
 const EmailSchema = z.object({
@@ -34,8 +36,6 @@ const ForgotPassword = () => {
 
     const user = useContext(AuthContext).getCurrAuth();
 
-
-
     const [email, setEmail] = useState("");
     const [isEmailValid, setIsEmailValid] = useState(false);
 
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
 
     const handleEmailValidation = (val) => {
         const result = EmailSchema.safeParse({ email: val });
-        console.log(result);
+        // console.log(result);
         if (result.success) {
             setIsEmailValid(true);
         } else {
@@ -61,7 +61,7 @@ const ForgotPassword = () => {
 
     const handlePasswordValidation = (val) => {
         const result = PasswordSchema.safeParse({ password: password, confirmPassword: val });
-        console.log(result);
+        // console.log(result);
         if (result.success) {
             setDoPasswordsMatch(true);
         } else {
@@ -69,7 +69,30 @@ const ForgotPassword = () => {
         }
     }
 
+    const handlePasswordChange = async () => {
+        const body = {
+            email: email,
+            password: password
+        }
+        await serverAxiosInstance.post("/auth/forgot", { ...body }).then((res) => {
+            if (res.status === 200) {
+                toast.success("Password changed successfully!", {
+                    description: "You can now login with your new password.",
+                    duration: 3000,
+                })
+                setTimeout(() => {
+                    navigate("/login", { replace: true });
+                }, 200);
+            }
+        }).catch((err) => {
+            toast.error("An error occurred while changing password!", {
+                description: err?.response?.data?.message,
+                duration: 3000,
+            })
+        });
+    }
 
+    
 
     useEffect(() => {
         if (Object.keys(user).length > 0) {
@@ -148,7 +171,8 @@ const ForgotPassword = () => {
                         <Button
                             variant={""}
                             className={"w-full mt-4"}
-                            disabled={!isEmailVerified} onClick={() => { /* Handle password reset */ }}
+                            disabled={!isEmailVerified || !doPasswordsMatch}
+                            onClick={handlePasswordChange}
                         >
                             Change Password
                         </Button>

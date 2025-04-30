@@ -1,7 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Home from './../pages/Home';
 import PageLayout from '@/components/custom/PageLayout';
-import Login from '@/components/custom/Login';
 import Signup from '@/components/custom/Signup';
 import Proposals from '@/pages/Proposals';
 import { useContext } from 'react';
@@ -14,6 +13,8 @@ import ViewUserProfile from '@/pages/ViewUserProfile';
 import ViewProposal from '@/pages/ViewProposal';
 import UserProjects from '@/pages/UserProjects';
 import ForgotPassword from '@/pages/ForgotPassword';
+import Login from '@/components/custom/Login';
+// import LoginPage from '@/pages/LoginPage';
 
 
 const useMyRouter = () => {

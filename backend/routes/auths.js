@@ -13,6 +13,8 @@ authRouter.route('/register')
 authRouter.route('/verify').post(authController.handleOTPVerification);
 authRouter.route('/generate').post(authController.generateOTP);
 
+authRouter.route('/forgot').post(authController.forgotPasswordActionHandler);
+
 
 
 // auth

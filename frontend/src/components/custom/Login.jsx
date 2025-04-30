@@ -87,15 +87,6 @@ const Login = () => {
   }
 
 
-  useEffect(() => {
-    if (Object.keys(user).length > 0) {
-      if (window.history.length > 2) {
-        navigate(-1);
-      } else {
-        navigate("/", { replace: true });
-      }
-    }
-  }, [user, navigate])
 
 
 
@@ -106,8 +97,16 @@ const Login = () => {
       } else {
         navigate("/user/profile");
       }
+    } else {
+      if (user && Object.keys(user).length > 0) {
+        if (window.history.length > 2) {
+          navigate(-1);
+        }else{
+          navigate("/");
+        }
+      }
     }
-  }, [shouldRedirect, navigate, isProfileComplete]);
+  }, [shouldRedirect, navigate, isProfileComplete, user]);
 
 
   const [showPassword, setShowPassword] = useState(false);

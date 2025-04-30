@@ -7,9 +7,10 @@ import { Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs"
 import { AuthContext } from "@/context/AuthContext"
 import { serverAxiosInstance } from "@/utilities/config"
 import { TabsList } from "@radix-ui/react-tabs"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { toast } from "sonner"
 import { ContactIcon, FolderOpenDotIcon, UserRoundPenIcon } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 
 
@@ -25,6 +26,9 @@ const UserProfile = () => {
     const { getCurrAuth, setCurrAuth } = useContext(AuthContext);
 
     const user = getCurrAuth();
+    const navigate= useNavigate();
+
+
 
     const [currTab, setCurrTab] = useState("about")
 
