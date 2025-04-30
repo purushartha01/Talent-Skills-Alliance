@@ -88,17 +88,17 @@ const Login = () => {
 
 
 
-
-
   useEffect(() => {
     if (shouldRedirect) {
+      // toast.error("Redirecting from if block...");
       if (isProfileComplete) {
         navigate("/");
       } else {
         navigate("/user/profile");
       }
     } else {
-      if (user && Object.keys(user).length > 0) {
+      // toast.error("Redirecting from else block...");
+      if (Object.keys(user).length > 0) {
         if (window.history.length > 2) {
           navigate(-1);
         }else{

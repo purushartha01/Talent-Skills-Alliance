@@ -38,12 +38,14 @@ const UserProjects = () => {
 
 
     useEffect(() => {
-        if (!currUser?.about) {
-            toast.error("Incomplete profile.", {
-                description: "Please complete your profile to access all features.",
-                duration: 3000,
-            });
-            navigate("/user/profile");
+        if (Object.keys(currUser).length > 0) {
+            if (!currUser?.about) {
+                toast.error("Incomplete profile.", {
+                    description: "Please complete your profile to access all features.",
+                    duration: 3000,
+                });
+                navigate("/user/profile");
+            }
         }
     }, [currUser, navigate]);
 

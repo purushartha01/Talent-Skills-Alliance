@@ -16,12 +16,14 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!currAuth?.about) {
-      toast.error("Incomplete profile.", {
-        description: "Please complete your profile to access all features.",
-        duration: 3000,
-      });
-      navigate("/user/profile");
+    if (Object.keys(currAuth).length > 0) {
+      if (!currAuth?.about) {
+        toast.error("Incomplete profile.", {
+          description: "Please complete your profile to access all features.",
+          duration: 3000,
+        });
+        navigate("/user/profile");
+      }
     }
   }, [currAuth, navigate]);
 
