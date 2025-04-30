@@ -5,6 +5,7 @@ const { imagKitPublicKey, imagKitPrivateKey, imagKitUrlEndpoint } = require("../
 const { returnNonSensitiveData } = require("../utitlity/utitlityFunctions");
 const ProposalModel = require("../model/Proposal");
 const ProjectModel = require("../model/Project");
+const ReviewModel = require("../model/Review");
 
 
 const imagekit = new ImageKit({
@@ -35,37 +36,27 @@ const getUserProfile = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
     try {
         console.log('within getUserProfile() method: \n');
-        const id = req.currUserId;
-        const currUser = await UserModel.findById(id).select('-password').populate({
-            path: 'proposals',
-            select: 'proposalTitle proposalDescription skillsRequired lookingFor applicationDeadline timeCommitment duration',
-            populate: {
-                path: 'applicant',
-                select: 'username email id about'
-            }
-        })
 
-        const foundProjects = await ProjectModel.find({
-            $or: [
-                { teamLeader: id },
-                { teamMembers: { $in: [id] } }
-            ]
-        });
+        const id = req.params.id;
 
-        console.log(`Found projects: ${foundProjects}`);
+        console.log("User ID: ", id);
 
-        if (!foundProjects || foundProjects.length === 0) {
-            console.log("No projects found!");
-            res.locals.statusCode = 404;
-            throw new Error("No projects found!");
+        const currUser = await UserModel.findById(id).select('-password');
+
+        const userProjects = await ProjectModel.find({ teamLeader: id });
+
+        const projectsOfUser = await ProjectModel.find({ teamMembers: { $elemMatch: { member: id } } });
+
+        const reviewsForUser = await ReviewModel.find({ reviewFor: id });
+        
+        const userData={
+            currUser,
+            userProjects,
+            projectsOfUser,
+            reviewsForUser
         }
 
-        console.log(`currUser: ${currUser}`);
-        if (!currUser) {
-            res.locals.statusCode = 404;
-            throw new Error("User not Found!");
-        }
-        res.status(200).json({ message: 'success', currUser });
+        res.status(200).json({ message: 'success', userData });
     } catch (err) {
         console.log(err);
         next(err);
