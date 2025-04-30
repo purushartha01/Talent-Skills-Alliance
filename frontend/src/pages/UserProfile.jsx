@@ -26,7 +26,7 @@ const UserProfile = () => {
     const { getCurrAuth, setCurrAuth } = useContext(AuthContext);
 
     const user = getCurrAuth();
-    const navigate= useNavigate();
+    const navigate = useNavigate();
 
 
 

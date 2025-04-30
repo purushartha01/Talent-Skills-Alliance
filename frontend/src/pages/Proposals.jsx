@@ -43,14 +43,16 @@ const Proposals = () => {
 
 
 
-  
+
   useEffect(() => {
-    if (!currUser?.about) {
-      toast.error("Incomplete Profile", {
-        description: "You need to complete your profile to access all features",
-        duration: 5000,
-      });
-      navigate("/user/profile");
+    if (Object.keys(currUser).length > 0) {
+      if (!currUser?.about) {
+        toast.error("Incomplete Profile", {
+          description: "You need to complete your profile to access all features",
+          duration: 5000,
+        });
+        navigate("/user/profile");
+      }
     }
   }, [currUser, navigate]);
 

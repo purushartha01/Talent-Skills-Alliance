@@ -122,11 +122,11 @@ const ViewProposal = () => {
                 });
         }
 
-        fetchProposal();
+        if (Object.keys(currUser).length > 0) {
+            fetchProposal();
+        }
 
-
-
-    }, [proposalId, currUserId, statusChange])
+    }, [proposalId, currUserId, statusChange, currUser])
 
 
     return (
