@@ -21,7 +21,7 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
 
     const handleSave = async (proposalId) => {
         setLoading(true);
-        console.log("Saved", proposalId)
+        // console.log("Saved", proposalId)
         await serverAxiosInstance.post('/user/proposal/save', { proposalID: proposalId })
             .then((res) => {
                 // console.log(res.data)
@@ -38,12 +38,12 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
     }
 
     const handleUnsave = async (proposalId) => {
-        console.log("Unsave", proposalId)
+        // console.log("Unsave", proposalId)
         setLoading(true);
         await serverAxiosInstance.post('/user/proposal/unsave', { proposalID: proposalId })
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Withing then()")
+                    // console.log("Withing then()")
                     setSaved(false);
                     setStatusChange((prev) => prev + 1);
                 }
@@ -56,13 +56,13 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
     }
 
     const handleApply = async (proposalId) => {
-        console.log("Applied", proposalId)
+        // console.log("Applied", proposalId)
 
         setLoading(true);
         await serverAxiosInstance.post('/user/proposal/apply', { proposalID: proposalId, appliedOn: new Date() })
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Withing then()")
+                    // console.log("Withing then()")
                     setStatusChange((prev) => prev + 1);
                 }
             })
@@ -90,8 +90,10 @@ const PostCard = ({ post, isSaved, isApplied, setStatusChange }) => {
                             </AvatarFallback>
                         </Avatar>
                         <div>
-                            <div className="font-medium">
-                                {post.author.username}
+                            <div className="font-medium capitalize">
+                                <Link to={`/user/${post?.author?._id}`} className="hover:underline text-blue-500 hover:text-blue-600">
+                                    {post.author.username}
+                                </Link>
                             </div>
                             <div className="text-sm text-muted-foreground">
                                 {post?.author?.about?.title}

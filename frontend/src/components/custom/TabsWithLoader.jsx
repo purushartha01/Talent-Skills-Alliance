@@ -32,7 +32,7 @@ const TabsWithLoader = ({ value, styles, isLoading, shouldParentUpdate, proposal
                                     console.log("applicant: ", applicant, "user: ", user?._id)
                                     return applicant?.applicant?._id === user?._id;
                                 });
-                                console.log("isApplied: ", isApplied)
+                                // console.log("isApplied: ", isApplied)
 
 
                                 return (

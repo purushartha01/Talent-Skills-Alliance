@@ -15,6 +15,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuthContext } from "@/context/AuthContext";
 import { serverAxiosInstance } from "@/utilities/config";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { set } from "date-fns";
 import { ClockAlert, PlusCircle, Search, Users } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -38,8 +39,14 @@ const Proposals = () => {
 
   const [allProposals, setAllProposals] = useState([]);
   const [allFilteredProposals, setAllFilteredProposals] = useState([]);
+
   const [allSavedProposals, setAllSavedProposals] = useState([]);
+  const [allSavedFilteredProposals, setAllSavedFilteredProposals] = useState([]);
+
   const [allAppliedProposals, setAllAppliedProposals] = useState([]);
+  const [allAppliedFilteredProposals, setAllAppliedFilteredProposals] = useState([]);
+
+  const [searchQuery, setSearchQuery] = useState("");
 
 
 
@@ -55,6 +62,41 @@ const Proposals = () => {
       }
     }
   }, [currUser, navigate]);
+
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim() === "") {
+      setAllFilteredProposals(allProposals);
+      setAllAppliedFilteredProposals(allAppliedProposals);
+      setAllSavedFilteredProposals(allSavedProposals);
+    } else {
+      const filteredProposals = allProposals.filter(proposal =>
+        proposal.proposalTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        proposal.proposalDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        proposal.skillsRequired.some(skill => skill?.skill?.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+      const filteredSavedProposals = allSavedProposals.filter(proposal =>
+        proposal.proposalTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        proposal.proposalDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        proposal.skillsRequired.some(skill => skill?.skill?.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+      const filteredAppliedProposals = allAppliedProposals.filter(proposal =>
+        proposal.proposalTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        proposal.proposalDescription.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        proposal.skillsRequired.some(skill => skill?.skill?.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+
+      setAllFilteredProposals(filteredProposals);
+      setAllAppliedFilteredProposals(filteredAppliedProposals);
+      setAllSavedFilteredProposals(filteredSavedProposals);
+    }
+    setIsLoading(true);
+    setIsLoading(false);
+  }
 
 
 
@@ -79,8 +121,17 @@ const Proposals = () => {
                 return proposal.proposalStatus === "open" && proposal.applicationDeadline > new Date().toISOString()
               });
               setAllSavedProposals(savedProposals);
+              setAllSavedFilteredProposals(savedProposals);
+
               setAllProposals(proposals);
+              setAllFilteredProposals(proposals);
+
               setAllAppliedProposals(
+                proposals.filter((proposal) =>
+                  proposal.applicants.some((applicant) => applicant?.applicant?._id === currUserId)
+                )
+              );
+              setAllAppliedFilteredProposals(
                 proposals.filter((proposal) =>
                   proposal.applicants.some((applicant) => applicant?.applicant?._id === currUserId)
                 )
@@ -101,6 +152,8 @@ const Proposals = () => {
   }, [needsReload, currUserId]);
 
 
+  // TODO: Features to be added: review edit, view, create options, remove unnecessary console logs, add loading states, add error handling, add success messages, add filters for proposals based on the user's skills and interests, as well as the proposal's status (open, closed, etc.), and some common filters like "recent", "popular", etc.
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl h-[82vh] flex flex-1">
@@ -108,15 +161,24 @@ const Proposals = () => {
         {/* sidebar */}
         <div className="w-full md:w-64 space-y-6">
           <div className="rounded-lg border p-4 space-y-4">
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search for proposals..."
-                className="pl-8"
+            <div className="flex flex-col items-center justify-evenly space-y-4">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search for proposals..."
+                  className="pl-8"
+                  disabled={isDisabled || isLoading}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <Button
+                className="w-full"
                 disabled={isDisabled || isLoading}
-              // value={searchQuery}
-              // onChange={(e) => setSearchQuery(e.target.value)}
-              />
+                onClick={handleSearch}
+              >
+                Search
+              </Button>
             </div>
             <Separator />
             <div className="space-y-2">
@@ -126,16 +188,19 @@ const Proposals = () => {
                   // variant={activeFilter === "all" ? "default" : "ghost"}
                   className="w-full justify-start"
                   disabled={isDisabled || isLoading}
-                // onClick={() => setActiveFilter("all")}
+                  onClick={(e) => { e.preventDefault(); setAllFilteredProposals(allProposals); setSearchQuery(""); }}
                 >
                   <Users className="mr-2 h-4 w-4" />
                   All Proposals
                 </Button>
                 <Button
-                  // variant={activeFilter === "saved" ? "default" : "ghost"}
                   className="w-full justify-start"
                   disabled={isDisabled || isLoading}
-                // onClick={() => setActiveFilter("saved")}
+                  onClick={(e) => {
+                    e.preventDefault(); setAllFilteredProposals(allProposals.toSorted(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )); setSearchQuery("");
+                  }}
                 >
                   <ClockAlert className="mr-2 h-4 w-4" />
                   Recent Proposals
@@ -199,7 +264,8 @@ const Proposals = () => {
               value={"all"}
               styles={"mt-6 space-y-6 h-full overflow-auto"}
               isLoading={isLoading}
-              proposalList={allProposals}
+              // proposalList={allProposals}
+              proposalList={allFilteredProposals}
               savedProposals={allSavedProposals}
               appliedProposals={allAppliedProposals}
               shouldParentUpdate={setNeedsReload}
@@ -215,7 +281,7 @@ const Proposals = () => {
               value={"saved"}
               styles={"mt-6 space-y-6 h-full overflow-auto"}
               isLoading={isLoading}
-              proposalList={allSavedProposals}
+              proposalList={allSavedFilteredProposals}
               savedProposals={allSavedProposals}
               appliedProposals={allAppliedProposals}
               shouldParentUpdate={setNeedsReload}
@@ -232,7 +298,7 @@ const Proposals = () => {
               value={"applied"}
               styles={"mt-6 space-y-6 h-full overflow-auto"}
               isLoading={isLoading}
-              proposalList={allAppliedProposals}
+              proposalList={allAppliedFilteredProposals}
               savedProposals={allSavedProposals}
               appliedProposals={allAppliedProposals}
               shouldParentUpdate={setNeedsReload}
