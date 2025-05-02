@@ -381,10 +381,13 @@ const SkillsSection = ({ userSkillsData, submitChanges }) => {
                                 <h3 className="text-sm font-medium">
                                     Your Projects
                                 </h3>
-                                {personalProjects.map((project, index) => (
-                                    needsUpdate === project.id ? (
+                                {personalProjects.map((project, index) => 
+                                (
+                                    
+                                    needsUpdate === project._id ? (
+                                        
                                         // edit existing project form
-                                        <div key={index} className="rounded-lg border p-4 space-y-4">
+                                        <div key={project._id} className="rounded-lg border p-4 space-y-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="projectTitle">
                                                     Project Title
@@ -451,7 +454,7 @@ const SkillsSection = ({ userSkillsData, submitChanges }) => {
                                                 <div className="flex flex-wrap gap-2 mb-2">
                                                     {newProject?.projectSkills?.map((skill) => (
                                                         <Badge key={skill.name} variant="secondary" className="relative capitalize flex items-center gap-1 pr-8">
-                                                            {console.log(newProject.projectSkills)}
+                                                            {/* {console.log(newProject.projectSkills)} */}
                                                             {skill.name}
                                                             <button
                                                                 type="button"
@@ -515,7 +518,7 @@ const SkillsSection = ({ userSkillsData, submitChanges }) => {
                                                     onClick={e => {
                                                         e.preventDefault();
                                                         setNeedsUpdate(null);
-                                                        setPersonalProjects((prev) => prev.map((p) => p.id === project.id ? { ...p, ...newProject } : p));
+                                                        setPersonalProjects((prev) => prev.map((p) => p._id === project._id ? { ...p, ...newProject } : p));
                                                         setNewProject({
                                                             projectTitle: "",
                                                             projectDescription: "",
@@ -535,15 +538,16 @@ const SkillsSection = ({ userSkillsData, submitChanges }) => {
                                         </div>
                                     ) : (
                                         // current values of project
-                                        <div key={index} className="rounded-lg border p-4 space-y-3">
+                                        <div key={project._id} className="rounded-lg border p-4 space-y-3">
                                             <div className="flex justify-between items-start">
                                                 <h4 className="font-medium">{project?.projectTitle}</h4>
                                                 <div className="flex gap-1">
                                                     <Button variant="ghost"
                                                         size="icon"
                                                         className="h-8 w-8"
+                                                        disabled={isSectionDisabled}
                                                         onClick={() => {
-                                                            setNeedsUpdate(project.id);
+                                                            setNeedsUpdate(project._id);
                                                             setNewProject(
                                                                 {
                                                                     projectTitle: project.projectTitle || "",
@@ -562,6 +566,7 @@ const SkillsSection = ({ userSkillsData, submitChanges }) => {
                                                         variant="ghost"
                                                         size="icon"
                                                         className="h-8 w-8 text-destructive"
+                                                        disabled={isSectionDisabled}
                                                         onClick={() => {
                                                             setPersonalProjects((prev) => prev.filter((p) => p.projectTitle !== project.projectTitle || p.projectDescription !== project.projectDescription));
                                                             setNewProject({
