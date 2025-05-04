@@ -11,7 +11,7 @@ const CustomTooltip = (props) => {
                         <Info className="text-gray-500" size={16} />
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent side="top" avoidCollisions={true} className={"backdrop-blur-lg supports-[backdrop-filter]:bg-background/65 [&>span]:hidden"}>
+                <TooltipContent side="top" avoidCollisions={true} className={"max-w-128 flex items-center justify-center backdrop-blur-lg supports-[backdrop-filter]:bg-background/65 [&>span]:hidden"}>
                     <div className="text-sm font-medium text-foreground/70">
                         <ul type="none" className="list-disc list-inside">
                             {props.tipContent.map((content, index) => (

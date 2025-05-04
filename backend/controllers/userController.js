@@ -47,13 +47,23 @@ const getUserById = async (req, res, next) => {
 
         const projectsOfUser = await ProjectModel.find({ teamMembers: { $elemMatch: { member: id } } });
 
-        const reviewsForUser = await ReviewModel.find({ reviewFor: id });
-        
-        const userData={
+        const reviewsForUser = await ReviewModel.find({ reviewFor: id })
+            .populate('reviewBy', 'username email id about')
+            .populate('forProject', 'projectTitle id')
+            .sort({ createdAt: -1 });
+
+        let performanceRating = 0;
+        if (reviewsForUser.length > 0) {
+            performanceRating = reviewsForUser.reduce((acc, review) => acc + review.rating, 0) / reviewsForUser.length;
+        }
+
+
+        const userData = {
             currUser,
             userProjects,
             projectsOfUser,
-            reviewsForUser
+            reviewsForUser,
+            performanceRating
         }
 
         res.status(200).json({ message: 'success', userData });

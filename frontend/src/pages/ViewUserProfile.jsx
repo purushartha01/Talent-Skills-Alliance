@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { AuthContext } from "@/context/AuthContext";
 import { serverAxiosInstance } from "@/utilities/config";
-import { Frown, LinkIcon, Loader2, MailIcon, MapPin, MessageSquare, Users } from "lucide-react";
+import { Frown, Info, LinkIcon, Loader2, MailIcon, MapPin, MessageSquare, Users } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -12,6 +12,8 @@ import LinkedIn from "@/assets/linkedin.svg";
 import Twitter from "@/assets/twitter.svg";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import CustomTooltip from "@/components/custom/CustomTooltip";
 
 
 
@@ -27,6 +29,7 @@ const ViewUserProfile = () => {
   const [userProfileData, setUserProfileData] = useState({});
   const [userProjectData, setUserProjectData] = useState([]);
   const [userReviewData, setUserReviewData] = useState([]);
+  const [performanceIndex, setPerformanceIndex] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -46,6 +49,7 @@ const ViewUserProfile = () => {
             setUserProfileData(userProfile);
             setUserProjectData([...userProjects, ...projectsOfUser]);
             setUserReviewData([...userReviews]);
+            setPerformanceIndex(response.data?.userData?.performanceRating);
           }
         })
         .catch((error) => {
@@ -126,6 +130,15 @@ const ViewUserProfile = () => {
 
 
 
+                    </div>
+                    <div className="md:ml-16 mt-4 mr-4 inline-flex items-center">
+                      {/* <span className="text-sm text-muted-foreground hidden xs:inline-flex">
+                        Appraisal :&nbsp;
+                      </span> */}
+                      <Badge variant={"secondary"} className="text-sm px-2 py-1">
+                        {performanceIndex} / 10
+                      </Badge>
+                      <CustomTooltip tipContent={["Performance Index is calculated based on the reviews provided by other users that have worked with this user.", "Performance Index of 0 indicates that no reviews were provided yet"]} />
                     </div>
 
                   </div>
@@ -210,7 +223,7 @@ const ViewUserProfile = () => {
                           Skills
                         </CardHeader>
                         <Separator className={"bg-gray-300"} />
-                        <CardContent className={"p-4 flex flex-col gap-2"}>
+                        <CardContent className={"p-4 flex flex-row flex-wrap lg:flex-col gap-2"}>
                           {
                             userProfileData?.expertise?.skills?.map((skill, index) => (
                               <div key={index} className="flex items-center justify-between">
@@ -328,9 +341,21 @@ const ViewUserProfile = () => {
                                       return (
                                         <div key={index} className="flex flex-col justify-between border rounded-md p-4 hover:shadow-lg transition-all duration-200 ease-in-out gap-2">
                                           <div className="flex flex-col gap-1">
-                                            <h3 className="text-md font-semibold">{review?.review}</h3>
-                                            <p className="text-sm text-muted-foreground">{review?.extraRemarks}</p>
-                                            <Badge className="text-sm text-muted-foreground capitalize" variant="secondary">{review?.rating}</Badge>
+                                            <div className="flex flex-col xs:flex-row justify-between items-center gap-2">
+                                              <h3 className="text-md font-semibold capitalize">{review?.forProject?.projectTitle}</h3>
+                                              <Badge variant={"secondary"} className={"text-sm capitalize"}>
+                                                {
+                                                  review?.rating > 5 ? "Positive" : review?.rating < 5 ? "Negative" : "Neutral"
+                                                }
+                                              </Badge>
+                                            </div>
+                                            <p className="text-sm text-muted-foreground first-letter:capitalize">{review?.review}</p>
+                                            <Badge className="text-sm capitalize" variant="secondary">
+                                              By :&nbsp;
+                                              {
+                                                review?.isAnonymous ? "Anonymous" : review?.reviewBy?.about?.name
+                                              }
+                                            </Badge>
                                           </div>
                                         </div>
                                       )

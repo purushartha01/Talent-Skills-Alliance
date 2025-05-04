@@ -13,8 +13,9 @@ import { toast } from 'sonner';
 
 
 
-const ProjectCard = ({ isProposed, project }) => {
+const ProjectCard = ({ isProposed, project, reviews = [] }) => {
 
+    // console.log("Reviews: ", reviews)
 
     const [isEditable, setIsEditable] = useState(false);
     const [isListExpanded, setIsListExpanded] = useState(false);
@@ -35,7 +36,7 @@ const ProjectCard = ({ isProposed, project }) => {
         serverAxiosInstance.put("/project/change-status", { projectId, newStatus })
             .then((res) => {
                 if (res.status === 200) {
-                    toast.success("Project status updated successfully.",{
+                    toast.success("Project status updated successfully.", {
                         description: res.data?.message || "Project status updated successfully.",
                         duration: 3000,
                     });
@@ -44,7 +45,7 @@ const ProjectCard = ({ isProposed, project }) => {
                 }
             }).catch((error) => {
                 console.error("Error updating project status:", error);
-                toast.error("Error updating project status.",{
+                toast.error("Error updating project status.", {
                     description: error?.response?.data?.message || "Something went wrong. Please try again.",
                     duration: 3000,
                 });
@@ -197,8 +198,9 @@ const ProjectCard = ({ isProposed, project }) => {
                                 className="w-fit h-8 capitalize cursor-pointer"
                                 onClick={() => { setIsListExpanded(!isListExpanded) }}
                             >
-                                <span>
-                                    <Users className="h-4 w-4 mr-2" />
+                                <span className='inline-flex items-center'>
+                                    <Users className="h-4 w-4 mr-2" />&nbsp;&#8226; &nbsp;
+                                    {project?.members.length}
                                 </span>
                                 <span className='text-md font-semibold'>
                                     Team Member{project?.members.length > 1 ? "s" : ""}
@@ -222,8 +224,15 @@ const ProjectCard = ({ isProposed, project }) => {
                         <div className="flex flex-col w-full gap-2">
                             {project.members.map((member, index) => {
                                 // console.log("Project: ", project)
+                                const isReviewPresent = reviews.some((review) => review?.reviewFor?._id === member?._id)
+                                const review = reviews.filter((review) => review?.reviewFor?._id === member?._id)[0]
                                 return (
-                                    <TeamMemberCard key={index} member={member} isLeader={member?._id === project?.teamLeader?._id} projectId={project?._id} />
+                                    <TeamMemberCard key={index}
+                                        member={member}
+                                        isLeader={member?._id === project?.teamLeader?._id} projectId={project?._id}
+                                        isReviewPresent={isReviewPresent}
+                                        review={review}
+                                    />
                                 )
                             }
                             )}

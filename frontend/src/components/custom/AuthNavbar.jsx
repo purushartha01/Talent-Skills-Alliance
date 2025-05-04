@@ -86,7 +86,11 @@ const AuthNavbar = () => {
                         <DropdownMenuContent className="w-56" align="end" forceMount>
                             <DropdownMenuLabel className="font-normal">
                                 <div className="flex flex-col space-y-1">
-                                    <p className="text-sm font-medium leading-none">{user?.username}</p>
+                                    <p className="text-sm font-medium leading-none">
+                                        <Link to={`/user/${user?._id}`} className="text-foreground hover:underline">
+                                            {user?.username}
+                                        </Link>
+                                    </p>
                                     <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
                                 </div>
                             </DropdownMenuLabel>

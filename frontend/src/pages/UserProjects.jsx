@@ -34,6 +34,8 @@ const UserProjects = () => {
     const [allProposedProjects, setAllProposedProjects] = useState([]);
     const [allProjects, setAllProjects] = useState([]);
 
+    const [allUserReviews, setAllUserReviews] = useState([]);
+
 
 
 
@@ -62,14 +64,11 @@ const UserProjects = () => {
 
                         setProposedProjects(res.data.foundProposedProjects);
                         setAllProposedProjects(res.data.foundProposedProjects);
+                        setAllUserReviews(res.data.foundReviewsGiven);
 
 
 
                         setIsLoading(false);
-                        // toast.success('Projects fetched successfully!', {
-                        //     description: 'You can now view your projects.',
-                        //     duration: 2000,
-                        // });
                     }
                 })
                 .catch((err) => {
@@ -162,7 +161,7 @@ const UserProjects = () => {
                             <TabsList className="grid w-full grid-cols-2">
                                 <TabsTrigger value="all">
                                     <Users className="h-4 w-4 mr-2" />
-                                    All Projects
+                                    Projects
                                 </TabsTrigger>
                                 <TabsTrigger value="proposed">
                                     <Briefcase className="h-4 w-4 mr-2" />
@@ -188,6 +187,11 @@ const UserProjects = () => {
                                                                 key={index}
                                                                 isProposed={project?.teamLeader?._id === currUserId}
                                                                 project={project}
+                                                                reviews={
+                                                                    allUserReviews.filter((rev) => {
+                                                                        return rev?.forProject?._id === project?._id;
+                                                                    })
+                                                                }
                                                             />
                                                         )
                                                     })
@@ -213,11 +217,17 @@ const UserProjects = () => {
                                             {
                                                 proposedProjects.length > 0 ?
                                                     proposedProjects.map((project, index) => (
+                                                        // console.log("foundReviewsGiven: ", allUserReviews),
+
                                                         <ProjectCard
                                                             key={index}
                                                             isProposed={true}
                                                             project={project}
-
+                                                            reviews={
+                                                                allUserReviews.filter((rev) => {
+                                                                    return rev?.forProject?._id === project?._id;
+                                                                })
+                                                            }
                                                         />
                                                     ))
                                                     :

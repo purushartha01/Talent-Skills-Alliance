@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 
 
 
-const TeamMemberCard = ({ member, isLeader, projectId }) => {
+const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review }) => {
 
     const user = useContext(AuthContext).getCurrAuth();
     const currUserId = user?.id ?? user?._id;
@@ -32,22 +32,22 @@ const TeamMemberCard = ({ member, isLeader, projectId }) => {
         console.log(reviewData);
 
         serverAxiosInstance.post("/project/review/new", { reviewData })
-        .then((result) => {
-            if(result.status === 200) {
-                console.log(result.data);
-                toast.success("Review added successfully.",{
-                    description: "Your review has been submitted successfully.",
+            .then((result) => {
+                if (result.status === 200) {
+                    console.log(result.data);
+                    toast.success("Review added successfully.", {
+                        description: "Your review has been submitted successfully.",
+                        duration: 3000,
+                    })
+                    setIsReviewDialogOpen(false);
+                }
+            }).catch((err) => {
+                console.error(err);
+                toast.error("Failed to add review. Please try again.", {
+                    description: "There was an error while adding the review. Please try again later.",
                     duration: 3000,
                 })
-                setIsReviewDialogOpen(false);
-            }
-        }).catch((err) => { 
-            console.error(err);
-            toast.error("Failed to add review. Please try again.",{
-                description: "There was an error while adding the review. Please try again later.",
-                duration: 3000,
-            })
-        });
+            });
 
     }
 
@@ -70,17 +70,21 @@ const TeamMemberCard = ({ member, isLeader, projectId }) => {
                     </AvatarFallback>
                 </Avatar>
                 <div>
-                    <div className="font-medium line-clamp-1 overflow-hidden">{member?.about?.name}</div>
+                    <div className="font-medium line-clamp-1 overflow-hidden">
+                        <Link to={`/user/${member?._id}`} className="text-foreground hover:underline">
+                            {member?.about?.name}
+                        </Link>
+                    </div>
                     <div className="text-sm text-muted-foreground flex flex-col sm:flex-row sm:items-center gap-2">
                         <span className='line-clamp-1'>{member?.about?.title || "Not Disclosed"}</span>
-                        {isLeader && <Badge variant="secondary" className="h-4 px-2 text-xs">Team Leader</Badge>}
+                        {isLeader && <Badge variant="secondary" className="h-4 px-2 text-xs hidden xs:inline-flex">Team Leader</Badge>}
                     </div>
                 </div>
             </div>
 
             <div className="flex flex-wrap gap-2 items-center">
                 {currUserId !== member?.id && currUserId !== member?._id && (
-                    <Dialog defaultOpen={false} open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
+                    <Dialog defaultOpen={false} open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen} className="overflow-hidden">
                         <DialogTrigger asChild>
                             <Button
                                 variant={"secondary"} className="flex items-center gap-2 text-foreground"
@@ -95,16 +99,42 @@ const TeamMemberCard = ({ member, isLeader, projectId }) => {
                                 <span>
                                     <MessageSquareMore className="h-4 w-4" />
                                 </span>
-                                <span className="text-sm hidden sm:inline-flex">
-                                    Review
-                                </span>
+                                {
+                                    isReviewPresent ?
+                                        <div>
+                                            <span className='text-sm hidden xs:inline-flex'>
+                                                Change Review
+                                            </span>
+                                        </div>
+                                        :
+                                        <span className="text-sm hidden xs:inline-flex">
+                                            Add Review
+                                        </span>
+                                }
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
+                        <DialogContent className="sm:max-w-[425px] max-h-2/3 overflow-y-auto">
                             <DialogHeader className="flex flex-col gap-2">
                                 <DialogTitle className="text-lg font-semibold">Review Peer&apos;s Performance</DialogTitle>
                                 <DialogDescription className="text-sm text-muted-foreground">
-                                    Please provide a genuine review for {member?.about?.name} based on their performance in the project. Your feedback is valuable and will help them improve.
+
+                                    {
+                                        !isReviewPresent ?
+                                            <span>
+                                                Please provide a genuine review for {member?.about?.name} based on their performance in the project. Your feedback is valuable and will help them improve.
+                                            </span> :
+                                            <>
+                                                <br />
+                                                <span className='text-sm'>
+                                                    You have already submitted a review for this member. You can change it if you want.
+                                                </span>
+                                                <br />
+                                                Previous Review: &nbsp;
+                                                <span className='font-bold'>
+                                                    {review?.review}
+                                                </span>
+                                            </>
+                                    }
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="flex flex-col gap-4">
@@ -128,7 +158,15 @@ const TeamMemberCard = ({ member, isLeader, projectId }) => {
                                     }}
                                     disabled={reviewData?.review?.length < 10}
                                 >
-                                    Submit Review
+                                    {
+                                        isReviewPresent ?
+                                            <span>
+                                                Change Review
+                                            </span> :
+                                            <span>
+                                                Submit Review
+                                            </span>
+                                    }
                                 </Button>
                             </div>
                         </DialogContent>

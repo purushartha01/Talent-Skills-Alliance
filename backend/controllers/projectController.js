@@ -19,17 +19,29 @@ const getAllProjects = async (req, res, next) => {
 
         const foundOtherProjects = await ProjectModel.find({
             $and: [
-                { members: { $in: [userId] } }
+                { members: { $in: [userId] } },
+                { teamLeader: { $ne: userId } } // Exclude projects where the user is the team leader
             ]
         })
             .populate('members', 'username email about id')
             .populate('teamLeader', 'username email about id');
 
-        console.log("Found Proposed Projects: ", foundProposedProjects, "Found Other Projects: ", foundOtherProjects, userId);
+
+        const foundReviewsGiven = await ReviewModel.find({
+            $and: [
+                { reviewBy: userId }
+            ]
+        })
+            .populate('forProject', 'projectTitle id')
+            .populate('reviewFor', 'username email about id')
+            .populate('reviewedOn', 'username email about id');
+
+
+        console.log("Found Reviws by user: ", foundReviewsGiven);
         // const allProjects = [...foundProposedProjects, ...foundOtherProjects];
         // TODO check when adding new projects addition of team leader in members array now provides all project in the "foundOtherProjects" array
 
-        res.status(200).json({ success: true, allProjects: foundOtherProjects, foundProposedProjects });
+        res.status(200).json({ success: true, allProjects: foundOtherProjects, foundProposedProjects, foundReviewsGiven });
     } catch (error) {
         console.log(error);
         next(error);
@@ -113,17 +125,37 @@ const addReviewForMember = async (req, res, next) => {
             throw new Error("Member not found in the project.");
         }
 
-        const reviewCreated = new ReviewModel({
-            review: reviewData.review,
-            reviewFor: reviewData.reviewFor,
-            reviewBy: reviewData.reviewBy,
-            reviewedOn: reviewData.reviewedOn,
-            forProject: reviewData.forProject,
-        });
+        const foundReview = await ReviewModel.findOne(
+            {
+                $and: [
+                    { reviewFor: reviewData.reviewFor },
+                    { forProject: reviewData.forProject },
+                    { reviewBy: reviewData.reviewBy }
+                ]
+            }
+        );
 
-        console.log("Review Created: ", reviewCreated.reviewBy);
 
-        await reviewCreated.save();
+        if (foundReview) {
+            foundReview.review = reviewData.review;
+            foundReview.isProcessed = false;
+            console.log("Found Edited: ", foundReview);
+            await foundReview.save();
+        } else {
+
+
+            const reviewCreated = new ReviewModel({
+                review: reviewData.review,
+                reviewFor: reviewData.reviewFor,
+                reviewBy: reviewData.reviewBy,
+                reviewedOn: reviewData.reviewedOn,
+                forProject: reviewData.forProject,
+            });
+
+            console.log("Review Created: ", reviewCreated);
+
+            await reviewCreated.save();
+        }
 
         res.status(200).json({ success: true, message: "Review added successfully." });
     }
@@ -154,7 +186,7 @@ const changeProjectStatus = async (req, res, next) => {
         }
 
         console.log("Found Project: ", foundProject);
-        await foundProject.save(); 
+        await foundProject.save();
 
         res.status(200).json({ success: true, message: "Project status updated successfully." });
 
