@@ -59,7 +59,7 @@ const Login = () => {
     setIsLoading(true);
     serverAxiosInstance.post("/auth/login", data)
       .then((res) => {
-        console.log("Login Response", res.data);
+        // console.log("Login Response", res.data);
         toast.success("Login successful", {
           description: "You have successfully logged in",
         });
@@ -189,7 +189,7 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button type="submit" onClick={(e) => console.log()} disabled={form.formState.isValid ? false : true} className={`w-3/4 mb-2`}>
+              <Button type="submit" disabled={form.formState.isValid ? false : true} className={`w-3/4 mb-2`}>
                 {isLoading ? <div className="w-full flex items-center justify-center">
                   <Loader2 className="animate-spin mr-2" size={16} /> Logging In...
                 </div> :

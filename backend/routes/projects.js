@@ -15,4 +15,7 @@ projectRouter.route('/complete').post(projectController.completeProjectCreation)
 
 projectRouter.route('/review/new').post(projectController.addReviewForMember);
 
+projectRouter.route('/change-status').put(projectController.changeProjectStatus);
+
+
 module.exports= projectRouter; //exporting the router object

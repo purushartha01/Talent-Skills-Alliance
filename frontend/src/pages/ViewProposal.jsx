@@ -35,7 +35,7 @@ const ViewProposal = () => {
 
     const handleSave = async (proposalId) => {
         setIsLoading(true);
-        console.log("Saved", proposalId)
+        // console.log("Saved", proposalId)
         await serverAxiosInstance.post('/user/proposal/save', { proposalID: proposalId })
             .then((res) => {
                 // console.log(res.data)
@@ -52,12 +52,12 @@ const ViewProposal = () => {
     }
 
     const handleUnsave = async (proposalId) => {
-        console.log("Unsave", proposalId)
+        // console.log("Unsave", proposalId)
         setIsLoading(true);
         await serverAxiosInstance.post('/user/proposal/unsave', { proposalID: proposalId })
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Withing then()")
+                    // console.log("Withing then()")
                     setIsSaved(false);
                     setStatusChange((prev) => prev + 1);
                 }
@@ -70,13 +70,13 @@ const ViewProposal = () => {
     }
 
     const handleApply = async (proposalId) => {
-        console.log("Applied", proposalId)
+        // console.log("Applied", proposalId)
 
         setIsLoading(true);
         await serverAxiosInstance.post('/user/proposal/apply', { proposalID: proposalId, appliedOn: new Date() })
             .then((res) => {
                 if (res.status === 200) {
-                    console.log("Withing then()")
+                    // console.log("Withing then()")
                     setIsApplied(true);
                     toast.success("Applied successfully", {
                         description: "You have successfully applied for the proposal.",
@@ -99,7 +99,7 @@ const ViewProposal = () => {
         const fetchProposal = async () => {
             await serverAxiosInstance.get(`/user/proposals/${proposalId}`)
                 .then((res) => {
-                    console.log(res.data)
+                    // console.log(res.data)
                     if (res.status === 200) {
                         setProposal(res.data.foundProposal)
                         setIsSaved(res.data.foundSavedProposals.savedProposals.includes(proposalId))

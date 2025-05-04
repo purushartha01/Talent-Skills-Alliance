@@ -41,7 +41,7 @@ const ViewUserProfile = () => {
             const projectsOfUser = response.data?.userData?.projectsOfUser;
             const userReviews = response.data?.userData?.reviewsForUser;
 
-            console.log(response.data);
+            // console.log(response.data);
 
             setUserProfileData(userProfile);
             setUserProjectData([...userProjects, ...projectsOfUser]);
@@ -81,7 +81,7 @@ const ViewUserProfile = () => {
               <Card className={"w-3/4 h-full"}>
                 {/* coverImg */}
                 <div className="relative h-48 md:h-64 lg:h-80 w-full overflow-hidden">
-                  {console.log("user: ", userProfileData, " projects: ", userProjectData, " reviews: ", userReviewData)}
+                  {/* {console.log("user: ", userProfileData, " projects: ", userProjectData, " reviews: ", userReviewData)} */}
                   <img src={userProfileData?.about?.coverImg} alt={"cover"} className="w-full h-full object-cover" />
                 </div >
                 {/* user's profile */}

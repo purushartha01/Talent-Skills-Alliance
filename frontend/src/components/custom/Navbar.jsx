@@ -31,7 +31,7 @@ const Navbar = () => {
     }
   ];
 
-  console.log("Non Auth Navbar Rendered");
+  // console.log("Non Auth Navbar Rendered");
 
   return (
     isLargeScreen ?

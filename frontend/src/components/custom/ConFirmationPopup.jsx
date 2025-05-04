@@ -26,6 +26,7 @@ const ConFirmationPopup = ({ triggerTxt, triggerClass, Icon, description, onConf
                     className={`${triggerClass}`}
                     onClick={() => setOpen(true)}
                     disabled={isLoading || disabled}
+                    title={triggerTxt}
                 >
                     <Icon className="h-4 w-4" />
                     <span className="hidden sm:inline-flex">

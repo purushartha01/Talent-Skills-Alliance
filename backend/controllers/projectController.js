@@ -11,8 +11,7 @@ const getAllProjects = async (req, res, next) => {
 
         const foundProposedProjects = await ProjectModel.find({
             $and: [
-                { teamLeader: userId },
-                { status: "ongoing" }
+                { teamLeader: userId }
             ]
         })
             .populate('teamLeader', 'username email about id')
@@ -20,8 +19,7 @@ const getAllProjects = async (req, res, next) => {
 
         const foundOtherProjects = await ProjectModel.find({
             $and: [
-                { members: { $in: [userId] } },
-                { status: "ongoing" }
+                { members: { $in: [userId] } }
             ]
         })
             .populate('members', 'username email about id')
@@ -136,9 +134,43 @@ const addReviewForMember = async (req, res, next) => {
 }
 
 
+const changeProjectStatus = async (req, res, next) => {
+
+    try {
+        const { projectId, newStatus } = req.body;
+
+        // Find the project by ID
+        const foundProject = await ProjectModel.findById(projectId);
+        if (!foundProject) {
+            res.locals.statusCode = 404; // Not Found
+            throw new Error("Project not found.");
+        }
+        // Update the project status
+
+        foundProject.status = newStatus;
+
+        if (newStatus === "completed") {
+            foundProject.completedOn = Date.now(); // Set the completed date
+        }
+
+        console.log("Found Project: ", foundProject);
+        await foundProject.save(); 
+
+        res.status(200).json({ success: true, message: "Project status updated successfully." });
+
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
+
+
+
+
 module.exports = {
     getAllProjects,
     getProjectById,
     completeProjectCreation,
-    addReviewForMember
+    addReviewForMember,
+    changeProjectStatus
 };

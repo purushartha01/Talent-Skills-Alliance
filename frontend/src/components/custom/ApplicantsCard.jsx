@@ -1,19 +1,28 @@
-import { Check, MailSearch, Users, X } from "lucide-react"
+import { Check, Forward, MailSearch, Users, X } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import ConFirmationPopup from "./ConFirmationPopup";
 import { Badge } from '@/components/ui/badge';
 import { serverAxiosInstance } from "@/utilities/config";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
+
+// TODO: Add the send custom email option
 
 
 const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
-    console.log(applicant)
+    // console.log(applicant)
+
+    const navigate = useNavigate();
+
+
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     }
+
 
     const submissionHandler = (body) => {
         serverAxiosInstance.put('/user/proposal/applicant-status', { ...body }).then((res) => {
@@ -58,6 +67,11 @@ const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
         submissionHandler(body)
     }
 
+    const handleContact = async (id) => {
+        console.log("Contacted:", applicant, id);
+
+    }
+
 
     return (
         <div
@@ -86,7 +100,7 @@ const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 items-center">
+            <div className="flex flex-col lg:flex-row flex-wrap gap-2 items-center">
                 <Badge className={
                     applicant?.status === "accepted"
                         ? "bg-green-100 text-green-800"
@@ -133,7 +147,7 @@ const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
                                         variant="outline"
                                         size="sm"
                                         className="text-gray-500 hover:bg-gray-100"
-                                        onClick={e => { e.preventDefault(); handleRejectMember(applicant?.applicant?._id); }}
+                                        onClick={e => { e.preventDefault(); handleContact(applicant?.applicant?._id) }}
                                     >
                                         <MailSearch className="h-4 w-4" />
                                         Get in Touch
@@ -148,8 +162,18 @@ const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
                         <Button
                             variant="outline"
                             size="sm"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                navigate(`/user/${applicant?.applicant?._id}`)
+                            }}
+                            title="View Profile"
                         >
-                            View Profile
+                            <span className="flex flex-row items-center justify-center space-x-2">
+                                <Forward className="h-4 w-4" />
+                            </span>
+                            <span className="hidden sm:inline-flex" >
+                                View Profile
+                            </span>
                         </Button>
                     }
                 </div>

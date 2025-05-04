@@ -2,11 +2,13 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronUp, SquarePen, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Loader2, SquarePen, Users } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import TeamMemberCard from './TeamMemberCard';
+import { serverAxiosInstance } from '@/utilities/config';
+import { toast } from 'sonner';
 
 
 
@@ -20,6 +22,38 @@ const ProjectCard = ({ isProposed, project }) => {
     // const [link,setLink]=useState({});
 
     const [changedStatus, setChangedStatus] = useState(project?.status);
+
+    const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+
+
+    const handleSaveChanges = (projectId, newStatus) => {
+        if (!isEditable) return;
+        if (project?.status === newStatus) return;
+        setIsUpdatingStatus(true);
+        // Call the API to update the project status
+
+        serverAxiosInstance.put("/project/change-status", { projectId, newStatus })
+            .then((res) => {
+                if (res.status === 200) {
+                    toast.success("Project status updated successfully.",{
+                        description: res.data?.message || "Project status updated successfully.",
+                        duration: 3000,
+                    });
+                    setChangedStatus(newStatus);
+                    project.status = newStatus;
+                }
+            }).catch((error) => {
+                console.error("Error updating project status:", error);
+                toast.error("Error updating project status.",{
+                    description: error?.response?.data?.message || "Something went wrong. Please try again.",
+                    duration: 3000,
+                });
+            }).finally(() => {
+                setIsUpdatingStatus(false);
+                setIsEditable(false);
+            });
+    }
+
 
     return (
         <Card className={"w-full flex flex-col gap-2 p-4"}>
@@ -35,7 +69,7 @@ const ProjectCard = ({ isProposed, project }) => {
                     </div>
                     <p className="text-sm text-muted-foreground first-letter:capitalize">{project.projectDescription}</p>
                 </div>
-                {isProposed &&
+                {(isProposed && project?.status !== "completed") &&
                     <div className='flex flex-col gap-2 ml-auto'>
                         <Button
                             variant={"secondary"}
@@ -45,7 +79,8 @@ const ProjectCard = ({ isProposed, project }) => {
                             <SquarePen className="h-4 w-4 mr-2" />
                             Edit
                         </Button>
-                    </div>}
+                    </div>
+                }
             </CardHeader>
             <CardContent className={"flex flex-col gap-4"}>
                 <div className="flex flex-col gap-2">
@@ -106,6 +141,7 @@ const ProjectCard = ({ isProposed, project }) => {
                             </Badge>
                         </div>) :
                         (
+                            project?.status !== "completed" &&
                             <div className={`flex flex-col gap-2 ${!isEditable ? "hidden" : "block"}`}>
                                 <h3 className='text-md font-semibold'>
                                     Project Status:
@@ -124,21 +160,24 @@ const ProjectCard = ({ isProposed, project }) => {
                                         <SelectItem value="completed">Completed</SelectItem>
                                         <SelectItem value="on-hold">On Hold</SelectItem>
                                     </SelectContent>
-
                                 </Select>
                                 <Button
                                     variant={"secondary"}
                                     className={"w-fit h-8"}
                                     onClick={() => {
-                                        // handleSaveChanges(project._id, changedStatus, link);
-                                        setIsEditable(false);
+                                        handleSaveChanges(project._id, changedStatus);
                                     }}
                                 >
-                                    Save Changes
+                                    <span className='text-md font-semibold inline-flex items-center'>
+                                        {isUpdatingStatus ? <Loader2 className="animate-spin h-4 w-4 mr-2" /> : ""}
+                                        {isUpdatingStatus ? ("Saving...") : ("Save Changes")}
+                                    </span>
                                 </Button>
                             </div>
                         )
                 }
+
+
 
                 {/* Time Commitment */}
                 {
@@ -182,9 +221,9 @@ const ProjectCard = ({ isProposed, project }) => {
                         </h3>
                         <div className="flex flex-col w-full gap-2">
                             {project.members.map((member, index) => {
-                                console.log("Project: ", project)
+                                // console.log("Project: ", project)
                                 return (
-                                    <TeamMemberCard key={index} member={member} isLeader={member?._id === project?.teamLeader?._id} projectId={project?._id}/>
+                                    <TeamMemberCard key={index} member={member} isLeader={member?._id === project?.teamLeader?._id} projectId={project?._id} />
                                 )
                             }
                             )}
