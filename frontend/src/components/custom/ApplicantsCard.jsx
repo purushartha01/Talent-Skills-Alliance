@@ -68,8 +68,7 @@ const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
     }
 
     const handleContact = async (id) => {
-        console.log("Contacted:", applicant, id);
-
+        window.open(`mailto:${applicant?.applicant?.email}`, "_blank");
     }
 
 
@@ -143,15 +142,18 @@ const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
                             </>
                             ) : (
                                 applicant?.status === "accepted" ?
-                                    (<Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="text-gray-500 hover:bg-gray-100"
-                                        onClick={e => { e.preventDefault(); handleContact(applicant?.applicant?._id) }}
-                                    >
-                                        <MailSearch className="h-4 w-4" />
-                                        Get in Touch
-                                    </Button>) : (
+                                    (
+
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="text-gray-500 hover:bg-gray-100"
+                                            onClick={e => { e.preventDefault(); handleContact(applicant?.applicant?._id) }}
+                                        >
+                                            <MailSearch className="h-4 w-4" />
+                                            Get in Touch
+                                        </Button>
+                                    ) : (
                                         null
                                     )
                             )

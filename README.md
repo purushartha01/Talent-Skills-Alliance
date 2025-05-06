@@ -1,1 +1,1 @@
-Steps to use this template
+Steps to install and use the Talent & Skills Alliance Portal:
