@@ -376,10 +376,10 @@ const getUserProposals = async (req, res, next) => {
             })
             .sort({ createdAt: -1 });
 
-        if (!foundUserProposals || foundUserProposals.length === 0) {
-            res.locals.statusCode = 404;
-            throw new Error("No proposals found!");
-        }
+        // if (!foundUserProposals || foundUserProposals.length === 0) {
+        //     res.locals.statusCode = 404;
+        //     throw new Error("No proposals found!");
+        // }
         // console.log("Found proposals: ", foundUserProposals);
         res.status(200).json({ status: 'success', message: 'Proposals fetched successfully!', foundUserProposals });
 

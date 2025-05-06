@@ -43,6 +43,22 @@ const AuthNavbar = () => {
         }
     ];
 
+    const drawerLinks = [
+        ...links,
+        {
+            to: "/user/profile",
+            text: "My Profile",
+        },
+        {
+            to: "/proposals/manage",
+            text: "My Proposals",
+        },
+        {
+            to: "/user/projects",
+            text: "My Projects",
+        },
+    ]
+
     const handleLogout = () => {
         logOut();
         if (!isLargeScreen) {
@@ -58,7 +74,7 @@ const AuthNavbar = () => {
                     <a className="btn btn-ghost normal-case text-xl font-[Lobster]">TSA</a>
                 </div>
                 <div className="h-full w-8/10 flex items-center justify-center">
-                    <ul className="w-1/2   flex flex-row justify-between p-0">
+                    <ul className="w-1/3 flex flex-row justify-between p-0">
                         {links.map((link, index) => {
                             return (
                                 <li key={index} className="w-1/3 ">
@@ -160,7 +176,7 @@ const AuthNavbar = () => {
                     <DrawerDescription></DrawerDescription>
                     <div className={"flex flex-col items-center h-[80vh]"}>
                         <ul className="w-full flex flex-col justify-center">
-                            {links.map((link, index) => {
+                            {drawerLinks.map((link, index) => {
                                 return (
                                     <li key={index} className="w-full h-1/4 mb-2">
                                         <Link to={link.to} className="w-full flex items-center p-2 hover:bg-gray-200 rounded-md text-xl" onClick={closeDrawer}>
@@ -175,37 +191,29 @@ const AuthNavbar = () => {
                         <div className="w-full h-full flex items-center">
                             <Accordion className="w-full" type="single" collapsible>
                                 <AccordionItem value="user-menu">
-                                    <AccordionTrigger className="w-full flex flex-row items-center justify-evenly">
+                                    <AccordionTrigger className="w-full flex flex-row items-center justify-evenly py-2">
                                         <Avatar className="h-8 w-8">
                                             <AvatarImage src={user?.avatar || "https://cdn.vectorstock.com/i/2000v/28/66/profile-placeholder-image-gray-silhouette-vector-21542866.avif"} alt={user.username} />
                                             <AvatarFallback>JD</AvatarFallback>
                                         </Avatar>
-                                        <div className="flex flex-col space-y-1 w-full overflow-hidden">
-                                            <p className="text-sm font-medium leading-none">{user.username}</p>
-                                            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                                        <div className="flex flex-col space-y-1 w-full overflow-hidden hover:no-underline py-2">
+                                            <p className="text-md font-medium leading-none flex flex-col gap-2">
+                                                <Link to={`/user/${user?._id}`} className="text-foreground hover:underline hover:text-blue-600 w-fit" onClick={closeDrawer}>
+                                                    {user?.username}
+                                                </Link>
+                                                <span className="text-sm leading-none text-muted-foreground h-fit">{user.email}</span>
+                                            </p>
                                         </div>
                                     </AccordionTrigger>
                                     <AccordionContent className={"mb-4 pl-8 font-semibold"}>
-                                        <Link to="/user/profile" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
-                                            <User className="mr-2 h-4 w-4" />
-                                            <span>Profile</span>
-                                        </Link>
-                                        <Link to="/proposals/manage" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
-                                            <Folder className="mr-2 h-4 w-4" />
-                                            <span>My Proposals</span>
-                                        </Link>
-                                        <Link to="/user/projects" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
-                                            <Folder className="mr-2 h-4 w-4" />
-                                            <span>My Projects</span>
-                                        </Link>
                                         {/* <Link to="/user/settings" className="flex flex-row items-center mb-2 hover:bg-gray-300" onClick={closeDrawer}>
                                             <Settings className="mr-2 h-4 w-4" />
                                             <span>Settings</span>
                                         </Link> */}
                                         {/* TODO: Add user logout functionality */}
-                                        <Link to="#" className="flex flex-row items-center mb-2 text-destructive/100 hover:bg-gray-300" onClick={e => { closeDrawer(); handleLogout(); }}>
+                                        <Link to="#" className="flex flex-row items-center justify-center mb-2 text-destructive/100 hover:bg-red-100 py-2 rounded-md px-2" onClick={e => { e.preventDefault(); closeDrawer(); handleLogout(); }}>
                                             <LogOut className="mr-2 h-4 w-4" />
-                                            <span>Log out</span>
+                                            <span className="hidden xs:inline-flex">Log out</span>
                                         </Link>
                                     </AccordionContent>
                                 </AccordionItem>

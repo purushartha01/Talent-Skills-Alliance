@@ -136,13 +136,11 @@ const ViewUserProfile = () => {
                         Appraisal :&nbsp;
                       </span> */}
                       <Badge variant={"secondary"} className="text-sm px-2 py-1">
-                        {performanceIndex} / 10
+                        {(Math.round(performanceIndex * 10) / 10)} / 10
                       </Badge>
                       <CustomTooltip tipContent={["Performance Index is calculated based on the reviews provided by other users that have worked with this user.", "Performance Index of 0 indicates that no reviews were provided yet"]} />
                     </div>
-
                   </div>
-
 
                   {/* Profile Body */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -339,13 +337,17 @@ const ViewUserProfile = () => {
                                 <>
                                   {
                                     userReviewData[0]?.extraRemarks !== null &&
-                                    <div className="flex flex-col gap-2">
-                                      <h3 className="text-md font-semibold">Remarks Summary: </h3>
-                                      {
-                                        userReviewData[0]?.extraRemarks
-                                      }
-                                    </div>
+                                    <>
+                                      <Card className="flex flex-col gap-2 p-4">
+                                        <h5 className="text-md font-semibold">Summary: </h5>
+                                        {
+                                          userReviewData[0]?.extraRemarks
+                                        }
+                                      </Card>
+                                      <Separator className={"bg-gray-400"} />
+                                    </>
                                   }
+
 
                                   <div className="flex flex-col gap-2">
                                     {userReviewData.map((review, index) => {
