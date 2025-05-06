@@ -10,11 +10,12 @@ import TeamMemberCard from './TeamMemberCard';
 import { serverAxiosInstance } from '@/utilities/config';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { set } from 'zod';
 
 
 
 
-const ProjectCard = ({ isProposed, project, reviews = [] }) => {
+const ProjectCard = ({ isProposed, project, reviews = [], setShouldParentUpdate }) => {
 
     // console.log("Reviews: ", reviews)
 
@@ -241,11 +242,13 @@ const ProjectCard = ({ isProposed, project, reviews = [] }) => {
                                 const isReviewPresent = reviews.some((review) => review?.reviewFor?._id === member?._id)
                                 const review = reviews.filter((review) => review?.reviewFor?._id === member?._id)[0]
                                 return (
-                                    <TeamMemberCard key={index}
+                                    <TeamMemberCard
+                                        key={index}
                                         member={member}
                                         isLeader={member?._id === project?.teamLeader?._id} projectId={project?._id}
                                         isReviewPresent={isReviewPresent}
                                         review={review}
+                                        setShouldParentUpdate={setShouldParentUpdate}
                                     />
                                 )
                             }

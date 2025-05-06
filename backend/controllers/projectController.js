@@ -197,6 +197,46 @@ const changeProjectStatus = async (req, res, next) => {
 }
 
 
+const removeMemberFromProject = async (req, res, next) => {
+    try {
+        const { projectId, memberId } = req.body;
+
+        console.log("Project ID: ", projectId, "Member ID: ", memberId);
+
+        // Find the project by ID
+        const foundProject = await ProjectModel.findById(projectId);
+        if (!foundProject) {
+            res.locals.statusCode = 404; // Not Found
+            throw new Error("Project not found.");
+        }
+
+        // Remove the member from the project
+        foundProject.members = foundProject.members.filter((member) => member.toString() !== memberId);
+
+        console.log("Found Proposals: ", foundProject.associatedWith);
+
+        const foundProposal = await ProposalModel.findById(foundProject.associatedWith);
+        if (!foundProposal) {
+            res.locals.statusCode = 404; // Not Found
+            throw new Error("Proposal not found.");
+        }
+
+        foundProposal.applicants = foundProposal.applicants.filter((applicant) => applicant.applicant.toString() !== memberId);
+
+        console.log("Found Project: ", foundProject);
+        console.log("Found Proposal: ", foundProposal);
+
+
+        await foundProject.save();
+        await foundProposal.save();
+
+
+        res.status(200).json({ success: true, message: "Member removed from project successfully." });
+    } catch (error) {
+        console.log(error);
+        next(error);
+    }
+}
 
 
 module.exports = {
@@ -204,5 +244,6 @@ module.exports = {
     getProjectById,
     completeProjectCreation,
     addReviewForMember,
-    changeProjectStatus
+    changeProjectStatus,
+    removeMemberFromProject
 };

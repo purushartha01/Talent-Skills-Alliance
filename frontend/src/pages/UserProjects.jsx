@@ -161,7 +161,7 @@ const UserProjects = () => {
                             <TabsList className="grid w-full grid-cols-2">
                                 <TabsTrigger value="all">
                                     <Users className="h-4 w-4 mr-2" />
-                                    Projects
+                                    Team Projects
                                 </TabsTrigger>
                                 <TabsTrigger value="proposed">
                                     <Briefcase className="h-4 w-4 mr-2" />
@@ -192,12 +192,13 @@ const UserProjects = () => {
                                                                         return rev?.forProject?._id === project?._id;
                                                                     })
                                                                 }
+                                                                setShouldParentUpdate={setShouldUpdate}
                                                             />
                                                         )
                                                     })
                                                     :
                                                     <div className="flex items-center justify-center h-64">
-                                                        <p>No projects found.</p>
+                                                        <p>No team projects found.</p>
                                                     </div>
                                             }
                                         </div>
@@ -228,11 +229,12 @@ const UserProjects = () => {
                                                                     return rev?.forProject?._id === project?._id;
                                                                 })
                                                             }
+                                                            setShouldParentUpdate={setShouldUpdate}
                                                         />
                                                     ))
                                                     :
                                                     <div className="flex items-center justify-center h-64">
-                                                        <p>No projects found.</p>
+                                                        <p>No projects proposed  yet.</p>
                                                     </div>
                                             }
                                         </div>

@@ -1,7 +1,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Check, Mail, MailSearch, MessageSquareMore, Users, X } from 'lucide-react';
+import { Check, Mail, MailSearch, MessageSquareMore, Trash, Users, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -10,11 +10,12 @@ import { Textarea } from '../ui/textarea';
 import { AuthContext } from '@/context/AuthContext';
 import { serverAxiosInstance } from '@/utilities/config';
 import { toast } from 'sonner';
+import ConFirmationPopup from './ConFirmationPopup';
 
 
 
 
-const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review }) => {
+const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review, setShouldParentUpdate }) => {
 
     const user = useContext(AuthContext).getCurrAuth();
     const currUserId = user?.id ?? user?._id;
@@ -49,6 +50,31 @@ const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review }
                 })
             });
 
+    }
+
+
+    const handleRejectTeamMember = async (pid,mid) => {
+        console.log("PID:", pid," MID:", mid);
+        const body = {
+            projectId: pid,
+            memberId: mid,
+        }
+        serverAxiosInstance.post('/project/remove-member',{...body} ).then((res) => {
+            if (res.status === 200) {
+                console.log("Status updated successfully")
+                toast.success("Member removed successfully", {
+                    description: "The member has been removed from the project successfully.",
+                    duration: 3000,
+                })
+                setShouldParentUpdate(prev => prev + 1)
+            }
+        }).catch((err) => {
+            console.log("Error updating status: ", err)
+            toast.error("Error removing member", {
+                description: "There was an error removing the member from the project.",
+                duration: 3000,
+            })
+        })
     }
 
 
@@ -181,7 +207,16 @@ const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review }
                         Contact
                     </span>
                 </a> */}
-
+                {
+                    (!isLeader && currUserId !== member?._id) &&
+                    < ConFirmationPopup
+                        triggerTxt={"Remove"}
+                        triggerClass={"textred-500 hover:bg-red-100"}
+                        description={`Are you sure you want to reject ${member?.about?.name} as a member?`}
+                        onConfirm={e => { e.preventDefault(); handleRejectTeamMember(projectId,member?._id); }}
+                        Icon={X}
+                    />
+                }
             </div>
         </div >
     )

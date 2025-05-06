@@ -17,5 +17,7 @@ projectRouter.route('/review/new').post(projectController.addReviewForMember);
 
 projectRouter.route('/change-status').put(projectController.changeProjectStatus);
 
+projectRouter.route('/remove-member').post(projectController.removeMemberFromProject);
+
 
 module.exports= projectRouter; //exporting the router object
