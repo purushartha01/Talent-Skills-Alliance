@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
 import { serverAxiosInstance } from "@/utilities/config";
 import { toast } from "sonner";
+import Timer from "@/components/custom/Timer";
 
 
 const EmailSchema = z.object({
@@ -92,7 +93,7 @@ const ForgotPassword = () => {
         });
     }
 
-    
+
 
     useEffect(() => {
         if (Object.keys(user).length > 0) {
