@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { serverAxiosInstance } from "@/utilities/config";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import ShowContactInfo from "./ShowContactInfo";
 
 
 // TODO: Add the send custom email option
@@ -144,15 +145,7 @@ const ApplicantsCard = ({ applicant, setShouldUpdate, proposalID }) => {
                                 applicant?.status === "accepted" ?
                                     (
 
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="text-gray-500 hover:bg-gray-100"
-                                            onClick={e => { e.preventDefault(); handleContact(applicant?.applicant?._id) }}
-                                        >
-                                            <MailSearch className="h-4 w-4" />
-                                            Get in Touch
-                                        </Button>
+                                        <ShowContactInfo user={applicant?.applicant} />
                                     ) : (
                                         null
                                     )

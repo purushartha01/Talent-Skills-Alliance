@@ -11,6 +11,7 @@ import { AuthContext } from '@/context/AuthContext';
 import { serverAxiosInstance } from '@/utilities/config';
 import { toast } from 'sonner';
 import ConFirmationPopup from './ConFirmationPopup';
+import ShowContactInfo from './ShowContactInfo';
 
 
 
@@ -53,13 +54,13 @@ const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review, 
     }
 
 
-    const handleRejectTeamMember = async (pid,mid) => {
-        console.log("PID:", pid," MID:", mid);
+    const handleRejectTeamMember = async (pid, mid) => {
+        console.log("PID:", pid, " MID:", mid);
         const body = {
             projectId: pid,
             memberId: mid,
         }
-        serverAxiosInstance.post('/project/remove-member',{...body} ).then((res) => {
+        serverAxiosInstance.post('/project/remove-member', { ...body }).then((res) => {
             if (res.status === 200) {
                 console.log("Status updated successfully")
                 toast.success("Member removed successfully", {
@@ -113,7 +114,7 @@ const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review, 
                     <Dialog defaultOpen={false} open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen} className="overflow-hidden">
                         <DialogTrigger asChild>
                             <Button
-                                variant={"secondary"} className="flex items-center gap-2 text-foreground"
+                                variant={"secondary"} className="flex items-center gap-1 text-foreground"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     console.log("opened dialog");
@@ -198,22 +199,19 @@ const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review, 
                         </DialogContent>
                     </Dialog>)
                 }
-                {/* Add alternative method write mail */}
-                {/* <a href={`mailto:${member?.email}`} target='_self' className='flex items-center gap-2 text-foreground'>
-                    <span>
-                        <Mail className="h-4 w-4" />
-                    </span>
-                    <span className="text-sm hidden sm:inline-flex">
-                        Contact
-                    </span>
-                </a> */}
+
+                {
+                    (currUserId !== member?._id) &&
+                    <ShowContactInfo user={member} />
+                }
+
                 {
                     (!isLeader && currUserId !== member?._id) &&
                     < ConFirmationPopup
                         triggerTxt={"Remove"}
                         triggerClass={"textred-500 hover:bg-red-100"}
                         description={`Are you sure you want to reject ${member?.about?.name} as a member?`}
-                        onConfirm={e => { e.preventDefault(); handleRejectTeamMember(projectId,member?._id); }}
+                        onConfirm={e => { e.preventDefault(); handleRejectTeamMember(projectId, member?._id); }}
                         Icon={X}
                     />
                 }
