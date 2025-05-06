@@ -45,14 +45,14 @@ const Home = () => {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button asChild size="lg" variant="default" className={" sm:w-1/2 md:w-full"}>
+                  <Button asChild size="lg" variant="default" className={" sm:w-1/2 md:w-2/3"}>
                     <Link to="/signup" className="w-full flex items-center justify-center">
                       Get Started
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                {/* <div className="flex items-center space-x-4 text-sm text-gray-500">
                   <div className="flex -space-x-2">
                     {[1, 2, 3, 4].map((i) => (
                       <div
@@ -71,7 +71,7 @@ const Home = () => {
                   <div className="text-muted-foreground">
                     Join <span className="font-medium text-foreground">2,000+</span> tech professionals
                   </div>
-                </div>
+                </div> */}
               </div>
               {/* TODO: Add suitable image for this project */}
               <div className="flex items-center justify-center">
