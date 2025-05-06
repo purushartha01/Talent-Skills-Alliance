@@ -41,34 +41,34 @@ const ShowContactInfo = ({ user }) => {
                         </span>
                         is as follows:
                     </div>
-                    <div className='flex flex-row items-center justify-between gap-1'>
-                        <div className='flex gap-2'>
-                            Email:
-                            <span className='text-foreground font-semibold'>
-                                {user?.email}
-                            </span>
-                        </div>
-                        <div className='flex gap-2'>
-                            <Button variant="outline" size="icon" onClick={(e) => {
-                                e.preventDefault();
-                                navigator.clipboard.writeText(user?.email);
-                                setIsCopied(true);
-                                setTimeout(() => {
-                                    setIsCopied(false);
-                                }, 1000);
-                            }}
-                                title={isCopied ? "Copied" : "Copy Email"}
-                            >
-                                {
-                                    isCopied ?
-                                        <Check className='h-4 w-4 text-green-600' />
-                                        :
-                                        <CopyIcon className='h-4 w-4' />
-                                }
-                            </Button>
-                        </div>
-                    </div>
                 </DialogDescription>
+                <div className='flex flex-row items-center justify-between gap-1'>
+                    <div className='flex gap-2'>
+                        Email:
+                        <span className='text-foreground font-semibold'>
+                            {user?.email}
+                        </span>
+                    </div>
+                    <div className='flex gap-2'>
+                        <Button variant="outline" size="icon" onClick={(e) => {
+                            e.preventDefault();
+                            navigator.clipboard.writeText(user?.email);
+                            setIsCopied(true);
+                            setTimeout(() => {
+                                setIsCopied(false);
+                            }, 1000);
+                        }}
+                            title={isCopied ? "Copied" : "Copy Email"}
+                        >
+                            {
+                                isCopied ?
+                                    <Check className='h-4 w-4 text-green-600' />
+                                    :
+                                    <CopyIcon className='h-4 w-4' />
+                            }
+                        </Button>
+                    </div>
+                </div>
             </DialogContent>
         </Dialog>
     )

@@ -209,7 +209,7 @@ const TeamMemberCard = ({ member, isLeader, projectId, isReviewPresent, review, 
                     (!isLeader && currUserId !== member?._id) &&
                     < ConFirmationPopup
                         triggerTxt={"Remove"}
-                        triggerClass={"textred-500 hover:bg-red-100"}
+                        triggerClass={"text-red-500 hover:bg-red-100"}
                         description={`Are you sure you want to reject ${member?.about?.name} as a member?`}
                         onConfirm={e => { e.preventDefault(); handleRejectTeamMember(projectId, member?._id); }}
                         Icon={X}
