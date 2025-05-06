@@ -332,42 +332,42 @@ const ViewUserProfile = () => {
                         </CardHeader>
                         <Separator className={"bg-gray-300"} />
                         <CardContent className="p-4 flex flex-col gap-2">
+
                           {
-                            userReviewData?.length > 0 ?
+                            (userReviewData?.length > 0) ?
                               (
-                                <div className="flex flex-col gap-2">
-                                  {
-                                    userReviewData?.map((review, index) => {
+                                userReviewData[0]?.extraRemarks !== null ?
+                                  <div className="flex flex-col gap-2">
+                                    {
+                                      userReviewData[0]?.extraRemarks
+                                    }
+                                  </div>
+                                  :
+                                  <div className="flex flex-col gap-2">
+                                    {userReviewData.map((review, index) => {
                                       return (
-                                        <div key={index} className="flex flex-col justify-between border rounded-md p-4 hover:shadow-lg transition-all duration-200 ease-in-out gap-2">
-                                          <div className="flex flex-col gap-1">
-                                            <div className="flex flex-col xs:flex-row justify-between items-center gap-2">
-                                              <h3 className="text-md font-semibold capitalize">{review?.forProject?.projectTitle}</h3>
-                                              <Badge variant={"secondary"} className={"text-sm capitalize"}>
-                                                {
-                                                  review?.rating > 5 ? "Positive" : review?.rating < 5 ? "Negative" : "Neutral"
-                                                }
-                                              </Badge>
-                                            </div>
-                                            <p className="text-sm text-muted-foreground first-letter:capitalize">{review?.review}</p>
-                                            <Badge className="text-sm capitalize" variant="secondary">
-                                              By :&nbsp;
+                                        <div className="flex flex-col justify-between border rounded-md p-4 hover:shadow-lg transition-all duration-200 ease-in-out gap-2" key={index}>
+                                          <div className="flex flex-col sm:flex-row gap-1 sm:justify-between">
+                                            <h3 className="text-md font-semibold">{review?.forProject?.projectTitle}</h3>
+                                            <Badge className="text-sm text-muted-foreground capitalize" variant="secondary">
                                               {
-                                                review?.isAnonymous ? "Anonymous" : review?.reviewBy?.about?.name
+                                                review?.rating < 5 ? "Negative" :
+                                                  review?.rating > 5 ? "Positive" : "Excellent"
                                               }
                                             </Badge>
                                           </div>
+                                          <p className="text-sm text-muted-foreground">{review?.review}</p>
+                                          <Badge className="text-sm text-muted-foreground capitalize" variant="secondary">{review?.rating} / 10</Badge>
                                         </div>
                                       )
-                                    })
-                                  }
-                                </div>
+                                    })}
+                                  </div>
                               )
                               :
                               (
                                 <div className="flex items-center justify-center text-muted-foreground gap-2">
                                   <Frown className="h-4 w-4" />
-                                  <span className="text-sm">No reviews found.</span>
+                                  <span className="text-sm">No reviews yet.</span>
                                 </div>
                               )
                           }
