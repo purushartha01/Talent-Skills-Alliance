@@ -158,12 +158,12 @@ const UserProjects = () => {
                     {/* Main Content */}
                     <div className="flex-1 space-y-6">
                         <Tabs defaultValue="all" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2">
-                                <TabsTrigger value="all">
+                            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 h-fit border-none shadow-none">
+                                <TabsTrigger value="all" className={"text-md"}>
                                     <Users className="h-4 w-4 mr-2" />
                                     Team Projects
                                 </TabsTrigger>
-                                <TabsTrigger value="proposed">
+                                <TabsTrigger value="proposed" className={""}>
                                     <Briefcase className="h-4 w-4 mr-2" />
                                     Proposed Projects
                                 </TabsTrigger>

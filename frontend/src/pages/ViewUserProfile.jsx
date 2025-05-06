@@ -336,13 +336,15 @@ const ViewUserProfile = () => {
                           {
                             (userReviewData?.length > 0) ?
                               (
-                                userReviewData[0]?.extraRemarks !== null ?
+                                <>
+                                  userReviewData[0]?.extraRemarks !== null &&
                                   <div className="flex flex-col gap-2">
+                                    <h3 className="text-md font-semibold">Remarks Summary: </h3>
                                     {
                                       userReviewData[0]?.extraRemarks
                                     }
                                   </div>
-                                  :
+
                                   <div className="flex flex-col gap-2">
                                     {userReviewData.map((review, index) => {
                                       return (
@@ -362,6 +364,8 @@ const ViewUserProfile = () => {
                                       )
                                     })}
                                   </div>
+                                </>
+
                               )
                               :
                               (

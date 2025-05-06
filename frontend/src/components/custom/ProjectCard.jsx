@@ -184,8 +184,8 @@ const ProjectCard = ({ isProposed, project, reviews = [], setShouldParentUpdate 
 
                 {/* Time Commitment */}
                 {
-                    (project?.timeCommitment && project?.timeCommitment.length > 0) &&
-                    <div className='flex flex-row justify-between gap-2'>
+                    (project?.timeCommitment) &&
+                    <div className='flex flex-col sm:flex-row justify-between gap-2'>
                         <div className='flex flex-col gap-2'>
                             <h3 className='text-md font-semibold'>
                                 Time Commitment:
@@ -194,36 +194,41 @@ const ProjectCard = ({ isProposed, project, reviews = [], setShouldParentUpdate 
                                 {project?.timeCommitment}
                             </Badge>
                         </div>
-                        <div className='flex flex-col gap-2'>
-                            <Badge
-                                variant="secondary"
-                                className="w-fit h-8 capitalize cursor-pointer"
-                                onClick={() => { setIsListExpanded(!isListExpanded) }}
-                            >
-                                <span className='inline-flex items-center'>
-                                    <Users className="h-4 w-4 mr-2" />&nbsp;&#8226; &nbsp;
-                                    {project?.members.length}
-                                </span>
-                                <span className='text-md font-semibold'>
-                                    Team Member{project?.members.length > 1 ? "s" : ""}
-                                </span>
-                                <span>
-                                    {isListExpanded ? <ChevronUp /> : <ChevronDown />}
-                                </span>
-                            </Badge>
-                        </div>
+
                     </div>
                 }
 
-                <div className='flex flex-row justify-between gap-2'>
+                <div className='flex flex-col sm:flex-row justify-between gap-2'>
                     <div className='flex flex-col gap-2'>
                         <h3 className='text-md font-semibold'>
                             Leader Contact Details:
                         </h3>
-                        <Badge variant="secondary" className="w-fit h-8 first-letter:capitalize">
-                            {project?.teamLeader?.about?.name} &#8226; <Link to={`mailto:${project?.teamLeader?.email}`} className='hover:underline' target='_blank'>
+                        <p className='text-sm text-muted-foreground font-semibold flex flex-wrap gap-2'>
+                            <span>
+                                {project?.teamLeader?.about?.name}
+                            </span>
+                            &#8226;
+                            <span>
                                 {project?.teamLeader?.email}
-                            </Link>
+                            </span>
+                        </p>
+                    </div>
+                    <div className='flex flex-col gap-2 mt-8'>
+                        <Badge
+                            variant="secondary"
+                            className="w-fit h-8 capitalize cursor-pointer"
+                            onClick={() => { setIsListExpanded(!isListExpanded) }}
+                        >
+                            <span className='inline-flex items-center'>
+                                <Users className="h-4 w-4 mr-2" />&nbsp;&#8226; &nbsp;
+                                {project?.members.length}
+                            </span>
+                            <span className='text-md font-semibold'>
+                                Team Member{project?.members.length > 1 ? "s" : ""}
+                            </span>
+                            <span>
+                                {isListExpanded ? <ChevronUp /> : <ChevronDown />}
+                            </span>
                         </Badge>
                     </div>
                 </div>
