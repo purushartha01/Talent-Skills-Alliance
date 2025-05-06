@@ -9,7 +9,7 @@
     "frontendInstall":"cd frontend && npm i",
     "backend":"cd backend && npm start",
     "backendInstall":"cd backend && npm i",
-    "installDep": "concurrently \"npm i\"  \"npm run backendInstall\" \"npm run frontendInstall\"",
+    "installDep": "concurrently \"npm i\"  \"npm run backendInstall\" \"npm run frontendInstall --force\"",
     "application": "concurrently  \"npm run backend\" \"npm run frontend\""
   },
   "keywords": [],

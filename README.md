@@ -1,4 +1,15 @@
 # Talent & Skills Alliance
 
 ### Steps to install and use the Portal:
-1. Run the following command in the root directory of the project: 
+1. Run the following commands in the root directory of the project to install the dependencies: 
+
+```
+npm i
+```
+```
+npm run installDep
+```
+2. After that start the portal using the following command: 
+```
+npm run application
+```
