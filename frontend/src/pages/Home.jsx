@@ -44,7 +44,9 @@ const Home = () => {
                     collaborators, and build your next big project together.
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                {
+                  Object.keys(currAuth).length === 0 &&
+                  <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Button asChild size="lg" variant="default" className={" sm:w-1/2 md:w-2/3"}>
                     <Link to="/signup" className="w-full flex items-center justify-center">
                       Get Started
@@ -52,6 +54,7 @@ const Home = () => {
                     </Link>
                   </Button>
                 </div>
+                }
                 {/* <div className="flex items-center space-x-4 text-sm text-gray-500">
                   <div className="flex -space-x-2">
                     {[1, 2, 3, 4].map((i) => (
