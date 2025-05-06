@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import TeamMemberCard from './TeamMemberCard';
 import { serverAxiosInstance } from '@/utilities/config';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 
 
@@ -212,6 +213,19 @@ const ProjectCard = ({ isProposed, project, reviews = [] }) => {
                         </div>
                     </div>
                 }
+
+                <div className='flex flex-row justify-between gap-2'>
+                    <div className='flex flex-col gap-2'>
+                        <h3 className='text-md font-semibold'>
+                            Leader Contact Details:
+                        </h3>
+                        <Badge variant="secondary" className="w-fit h-8 first-letter:capitalize">
+                            {project?.teamLeader?.about?.name} &#8226; <Link to={`mailto:${project?.teamLeader?.email}`} className='hover:underline' target='_blank'>
+                                {project?.teamLeader?.email}
+                            </Link>
+                        </Badge>
+                    </div>
+                </div>
 
 
 
