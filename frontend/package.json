@@ -4,7 +4,6 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "inst":"npm i --legacy-peer-deps",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
