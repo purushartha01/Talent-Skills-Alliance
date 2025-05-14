@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 
 const returnSkillsList = () => {
     const tempSkillsList = [
@@ -487,10 +485,6 @@ const returnSkillsList = () => {
     return uniqueSkillsList.sort((a, b) => a.localeCompare(b));
 }
 
-const returnTitlesList = () => {
-    const tempTitlesList = fs.readFileSync('./job-titles_list.json', 'utf8');
-    return JSON.parse(tempTitlesList);
-}
 
 const logStatements = (string, err = null) => {
     if (err !== null)
