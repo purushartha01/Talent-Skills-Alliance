@@ -8,7 +8,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon main"
+    "start": "node main",
+    "dev": "nodemon main",
   },
   "devDependencies": {
     "dotenv": "^16.4.7",
