@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 
 const serverAxiosInstance = axios.create({
-    baseURL: "http://localhost:3000/api/v1",
+    baseURL: import.meta.env.VITE_BACKEND_URL || "http://localhost:3000/api/v1",
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
