@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser')
 
 //module imports
 const { logger } = require('./middlewares/logger');
-const { portno, dbConnectionString, cookieSecret } = require('./config/serverConfig');
+const { portno, dbConnectionString, cookieSecret, client_url } = require('./config/serverConfig');
 const { connectToDb } = require('./config/dbConfig');
 const { errorHandler } = require('./middlewares/errorHandler');
 const auths = require('./routes/auths');
@@ -24,7 +24,7 @@ const app = express();
 app.use(logger);
 app.use(cors(
     {
-        origin: true,
+        origin: client_url,
         credentials: true,
     }
 ))
