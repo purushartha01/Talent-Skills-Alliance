@@ -117,8 +117,13 @@ const generateOTP = async (req, res, next) => {
             console.log('OTP: ', otp);
             otpFound = await OTPModel.create({ email, otp });
         }
-        if (otpFound) {
-            res.status(200).json({ status: 'success', message: 'OTP sent!', expiresIn: ((otpFound.createdAt.getTime()) + 5 * 60 * 1000) });
+
+        // TODO: remember to change it back to 5 minutes timer
+        if (otpFound && otpFound.createdAt.getTime() + 60 * 1000 > Date.now()) {
+            res.status(200).json({ status: 'success', message: 'OTP sent!', expiresIn: ((otpFound.createdAt.getTime()) + 60 * 1000) });
+        } else {
+            res.locals.statusCode = 400;
+            throw new Error("OTP has expired or not found");
         }
     } catch (err) {
         console.log(err);

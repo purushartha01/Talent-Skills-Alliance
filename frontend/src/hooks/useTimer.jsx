@@ -1,165 +1,80 @@
 
-// import { useCallback, useEffect, useRef, useState } from "react";
-
-// export const useTimer = (maxTime = 300) => {
-//     const [timeLeft, setTimeLeft] = useState(maxTime);
-//     const [duration, setDuration] = useState(maxTime);
-//     const [isTimerActive, setIsTimerActive] = useState(false);
-//     const timerRef = useRef(null);
-
-//     const tick = useCallback(() => {
-//         const elapsedTime = Math.floor((Date.now() - timerRef.current) / 1000);
-//         clearInterval(timerRef.current);
-//         const remainingTime = duration - elapsedTime;
-
-//         if (remainingTime <= 0) {
-//             setTimeLeft(0);
-//             setIsTimerActive(false);
-//             clearInterval();
-//             return;
-//         }
-
-//         setTimeLeft(remainingTime);
-//         timerRef.current = setInterval(tick, 1000);
-
-//     }, [duration]);
-
-
-
-//     const startTimer = useCallback(() => {
-//         if (!isTimerActive) return;
-
-//         setIsTimerActive(true);
-//         setDuration(maxTime);
-//         tick();
-
-
-//     }, [isTimerActive, maxTime, tick]);
-
-
-//     const stopTimer = useCallback(() => {
-//         clearInterval(timerRef.current);
-//         setIsTimerActive(false);
-//         setTimeLeft(maxTime);
-//     }, [maxTime])
-
-//     const resetTimer = useCallback(() => {
-//         clearInterval(timerRef.current);
-//         setTimeLeft(maxTime);
-//         setIsTimerActive(false);
-//     }, [maxTime]);
-
-
-//     useEffect(() => {
-//         return () => {
-//             clearInterval(timerRef.current);
-//         };
-//     }, []);
-
-//     return { timeLeft, startTimer, stopTimer, isTimerActive: isTimerActive.current, setTimeLeft, resetTimer };
-
-// }
-
-
-
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useTimer = (maxTime = 300) => {
-    const [timeLeft, setTimeLeft] = useState(maxTime);
-    const [duration, setDuration] = useState(maxTime);
-    const [isTimerActive, setIsTimerActive] = useState(false);
-
-    const intervalRef = useRef(null);
+    const totalDurationRef = useRef(maxTime);
     const startTimeRef = useRef(null);
-
-    const clear = () => {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-    };
+    const intervalRef = useRef(null);
 
 
+    const [timeRemaining, setTimeRemaining] = useState(totalDurationRef.current);
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-    const tick = useCallback(() => {
-        const elapsed = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        const remaining = duration - elapsed;
 
-        if (remaining <= 0) {
-            setTimeLeft(0);
-            setIsTimerActive(false);
-            clear();
+    const tickSecond = useCallback(() => {
+        const currentTimer = Date.now();
+        const elapsedTime = Math.floor((currentTimer - startTimeRef.current) / 1000);
+        const remainingTime = Math.max(0, totalDurationRef.current - elapsedTime);
+
+        setTimeRemaining(remainingTime);
+
+        if (remainingTime <= 0) {
+            setIsTimerRunning(false);
+            clearInterval(intervalRef.current);
             return;
         }
 
-        setTimeLeft(remaining);
-    }, [duration]);
+        if (remainingTime === 0) {
+            clearInterval(intervalRef.current);
+            setIsTimerRunning(false);
+            return;
+        }
 
-
+    }, []);
 
 
     const startTimer = useCallback(() => {
-        if (isTimerActive) return;
-
-        clear();
-
-        // console.log("Starting timer with duration:", duration);
-
-        setIsTimerActive(true);
+        clearInterval(intervalRef.current);
+        setIsTimerRunning(true);
 
         startTimeRef.current = Date.now();
-        tick();
-        intervalRef.current = setInterval(tick, 1000);
-    }, [isTimerActive, tick]);
+
+        setIsTimerRunning(true);
+        setTimeRemaining(totalDurationRef.current);
+
+        intervalRef.current = setInterval(tickSecond, 1000);
+
+    }, [tickSecond]);
 
 
-
-
-    const stopTimer = useCallback(() => {
-        clear();
-        setIsTimerActive(false);
-        setTimeLeft(maxTime);
-    }, [maxTime]);
 
     const resetTimer = useCallback(() => {
-        clear();
-        setTimeLeft(duration);
-        setIsTimerActive(false);
-    }, [duration]);
+        clearInterval(intervalRef.current);
+        totalDurationRef.current = maxTime;
+        setIsTimerRunning(false);
+        setTimeRemaining(totalDurationRef.current);
+    }, [maxTime]);
 
 
 
-    const setTimeLeftManually = useCallback((newTime) => {
-        const safeTime = Math.max(0, Math.floor(newTime));
-        clear();
-        // console.log("Setting time left manually:", safeTime);
-        setTimeLeft(safeTime);
-        setDuration(safeTime);
+    const setTotalDurationManually = useCallback((newTime) => {
+        const safeToHandleTime = Math.max(0, Math.floor(newTime));
 
-        if (isTimerActive) {
-            startTimeRef.current = Date.now();
-            tick();
-            intervalRef.current = setInterval(() => tick(), 1000);
-        }
-    }, [isTimerActive, tick]);
-
-
-    useEffect(() => {
-        if (isTimerActive) {
-            startTimeRef.current = Date.now();
-            tick();
-            intervalRef.current = setInterval(() => tick(), 1000);
-        }
-    }, [duration, isTimerActive, tick]);
-
-    useEffect(() => {
-        return () => clear();
+        clearInterval(intervalRef.current);
+        setIsTimerRunning(false);
+        setTimeRemaining(safeToHandleTime);
+        totalDurationRef.current = safeToHandleTime;
+        console.log("Setting time left manually:", totalDurationRef.current);
     }, []);
 
+
+
+    useEffect(() => {
+        return () => clearInterval(intervalRef.current);
+    }, [])
+
+
     return {
-        timeLeft,
-        isTimerActive,
-        startTimer,
-        stopTimer,
-        resetTimer,
-        setTimeLeft: setTimeLeftManually,
-    };
+        timeRemaining, isTimerRunning, startTimer, resetTimer, setTotalDurationManually
+    }
 };

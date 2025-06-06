@@ -18,10 +18,11 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
     const [isOtpVerified, setIsOtpVerified] = useState(false)
     const [isSendingOtp, setIsSendingOtp] = useState(false);
     const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+    const [shouldResendOtp, setShouldResendOtp] = useState(false);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const { timeLeft, startTimer, resetTimer, setTimeLeft, isTimerActive } = useTimer(300);
+    const { timeRemaining, isTimerRunning, startTimer, resetTimer, setTotalDurationManually } = useTimer(60);
 
 
     const handleSendOtp = async () => {
@@ -30,10 +31,11 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
         await serverAxiosInstance.post("/auth/generate", { email: emailToVerify }).then((res) => {
             if (res.status === 200) {
                 // logStatements(res.data);
-                const expiresIn = new Date(res.data.expiresIn).getTime() - Date.now();
-                const timeL = Math.ceil(expiresIn / 1000);
-                console.log("Expires in: ", timeL, " seconds", "Time left: ", timeLeft, " seconds");
-                setTimeLeft(timeL);
+                const expiresIn = res.data.expiresIn;
+                const currentTime = Date.now();
+                const timeL = Math.max(0, Math.ceil((expiresIn - currentTime) / 1000));
+                console.log("Expires in: ", timeL, " seconds", "Time left: ", timeRemaining, " seconds");
+                setTotalDurationManually(timeL);
                 startTimer();
 
                 setIsOtpSent(true);
@@ -84,7 +86,7 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
                 setIsOtpVerified(true);
                 onEmailVerification();
                 setIsDialogOpen(false);
-                stopTimer();
+
                 setOtp("");
             }
         }).catch((err) => {
@@ -107,14 +109,14 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
         setIsOtpSent(false);
     }, [emailToVerify, isEmailVerified])
 
+
     useEffect(() => {
-        if (timeLeft <= 0) {
-            resetTimer();
+        if (timeRemaining <= 0) {
             setIsOtpSent(false);
-            setOtp("");
-            setTimeLeft(300);
+            resetTimer();
+            setShouldResendOtp(true);
         }
-    }, [timeLeft, resetTimer, setTimeLeft])
+    }, [timeRemaining, resetTimer]);
 
     return (
         <Dialog modal={false} open={isDialogOpen} onOpenChange={() => { setIsDialogOpen(); setOtp("") }}>
@@ -138,9 +140,23 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
                     <DialogDescription className="text-sm text-gray-500">
                         {
                             isOtpSent ?
-                                `Enter the OTP sent to your email:${emailToVerify}`
+                                <span className="text-sm font-normal flex flex-col items-center justify-center">
+                                    <span>
+                                        Enter the OTP sent to your email:
+                                    </span>
+                                    <span className="font-semibold">
+                                        {emailToVerify}
+                                    </span>
+                                </span>
                                 :
-                                `Please verify your email: ${emailToVerify}`
+                                <span className="text-sm font-normal">
+                                    <span>
+                                        Please verify your email:
+                                    </span>
+                                    <span className="font-semibold">
+                                        {emailToVerify}
+                                    </span>
+                                </span>
                         }
                     </DialogDescription>
                 </DialogHeader>
@@ -148,7 +164,7 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
                     variant="default"
                     className="mt-2 inline-flex"
                     onClick={handleSendOtp}
-                    disabled={isOtpSent || isEmailVerified || isTimerActive}
+                    disabled={isOtpSent || isEmailVerified}
                 >
                     <span className="">
                         {isSendingOtp ?
@@ -158,12 +174,12 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
                         }
                     </span>
                     <span className="">
-                        {isSendingOtp ? "Sending..." : isOtpSent ? "Resend OTP" : "Send OTP"}
+                        {(isSendingOtp && !shouldResendOtp) ? "Sending..." : (isSendingOtp && shouldResendOtp) ? "Resending" : isOtpSent ? "Resend OTP" : "Send OTP"}
                     </span>
                 </Button>
                 {isOtpSent &&
                     <div className="w-full flex flex-col items-center justify-center mt-4">
-                        <Timer currTime={timeLeft} maxTime={300} />
+                        <Timer currTime={timeRemaining} maxTime={60} />
                     </div>
                     // <p className="text-sm font-normal">OTP sent, expires at: <span className="font-semibold">
                     //     {new Date(expiresIn).toLocaleTimeString(undefined, { timeZone: "Asia/Kolkata" })}
