@@ -105,18 +105,52 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
         });
     }
 
+
+
     useEffect(() => {
         setIsOtpSent(false);
     }, [emailToVerify, isEmailVerified])
 
 
     useEffect(() => {
-        if (timeRemaining <= 0) {
-            setIsOtpSent(false);
-            resetTimer();
-            setShouldResendOtp(true);
+        const handleRemoveOtp = async () => {
+            await serverAxiosInstance.post("/auth/remove", { email: emailToVerify }).then((res) => {
+                if (res.status === 200) {
+                    toast.success("OTP removed successfully", {
+                        description: "You can now request a new OTP",
+                        duration: 5000,
+                        action: {
+                            label: "OK",
+                            onClick: () => {
+                                toast.dismiss()
+                            },
+                        },
+                    })
+                    setIsOtpSent(false);
+                    setOtp("");
+                }
+            }).catch((err) => {
+                toast.error("Failed to remove OTP", {
+                    description: err.response.data.error,
+                    duration: 5000,
+                    action: {
+                        label: "X",
+                        onClick: () => {
+                            toast.dismiss()
+                        },
+                    },
+                })
+            }).finally(() => {
+                setOtp("");
+                setIsOtpSent(false);
+                resetTimer();
+                setShouldResendOtp(true);
+            })
         }
-    }, [timeRemaining, resetTimer]);
+        if (timeRemaining <= 1) {
+            handleRemoveOtp();
+        }
+    }, [timeRemaining, resetTimer, emailToVerify]);
 
     return (
         <Dialog modal={false} open={isDialogOpen} onOpenChange={() => { setIsDialogOpen(); setOtp("") }}>
