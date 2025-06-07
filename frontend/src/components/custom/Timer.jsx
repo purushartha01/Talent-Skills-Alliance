@@ -1,59 +1,37 @@
-import { useEffect, useImperativeHandle, useState, forwardRef } from "react";
+
+import { useEffect, useState } from "react"
 import { Progress } from "../ui/progress";
 
-const Timer = forwardRef(({ maxTime = 60 }, ref) => {
-  const [timeLeft, setTimeLeft] = useState(maxTime);
-  const [isActive, setIsActive] = useState(false);
 
-  const progress = (timeLeft / maxTime) * 100;
 
-  // Start interval when active
+const Timer = ({ currTime, maxTime }) => {
+
+  const [currPercent, setCurrPercent] = useState(0)
+
   useEffect(() => {
-    let interval;
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
+    if (currTime > 0) {
+      setCurrPercent((currTime / maxTime) * 100)
+    } else {
+      setCurrPercent(0)
     }
-
-    if (timeLeft === 0) {
-      setIsActive(false);
-    }
-
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft]);
-
-  // Expose functions to parent
-  useImperativeHandle(ref, () => ({
-    startTimer: () => {
-      setTimeLeft(maxTime);
-      setIsActive(true);
-    },
-    resetTimer: () => {
-      setTimeLeft(maxTime);
-      setIsActive(false);
-    },
-    stopTimer: () => {
-      setIsActive(false);
-    },
-    isRunning: () => isActive,
-    getTime: () => timeLeft,
-  }));
+  }, [currTime, maxTime])
 
   return (
-    <div className="w-full flex flex-col items-center gap-2">
-      <Progress value={progress} className="w-3/4" />
-      <div className="text-sm font-semibold">
-        {isActive || timeLeft > 0 ? (
-          `${Math.floor(timeLeft / 60)}:${String(timeLeft % 60).padStart(2, "0")}`
-        ) : (
-          "Expired"
-        )}
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-[10vh] w-full">
+      <Progress value={currPercent} className={`w-[70%]`} indicatorClassName={`transition-colors ${currPercent < 25
+        ? 'bg-red-400'
+        : currPercent < 50
+          ? 'bg-orange-400'
+          : currPercent < 75
+            ? 'bg-yellow-400'
+            : 'bg-green-400'
+        }`
+      } />
+      <p className="text-lg font-semibold text-center">
+        {`Time Left: ${Math.floor(currTime / 60)}:${currTime % 60 < 10 ? `0${currTime % 60}` : currTime % 60}`}
+      </p>
     </div>
-  );
-});
+  )
+}
 
-Timer.displayName = "Timer";
-
-export default Timer;
+export default Timer
