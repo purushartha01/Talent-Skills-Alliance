@@ -116,16 +116,16 @@ const OTPComponent = ({ emailToVerify, isEmailValid, onEmailVerification, isEmai
         const handleRemoveOtp = async () => {
             await serverAxiosInstance.post("/auth/remove", { email: emailToVerify }).then((res) => {
                 if (res.status === 200) {
-                    toast.success("OTP removed successfully", {
-                        description: "You can now request a new OTP",
-                        duration: 5000,
-                        action: {
-                            label: "OK",
-                            onClick: () => {
-                                toast.dismiss()
-                            },
-                        },
-                    })
+                    // toast.success("OTP removed successfully", {
+                    //     description: "You can now request a new OTP",
+                    //     duration: 5000,
+                    //     action: {
+                    //         label: "OK",
+                    //         onClick: () => {
+                    //             toast.dismiss()
+                    //         },
+                    //     },
+                    // })
                     setIsOtpSent(false);
                     setOtp("");
                 }
