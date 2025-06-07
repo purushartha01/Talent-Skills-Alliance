@@ -12,11 +12,10 @@ authRouter.route('/register')
 
 authRouter.route('/verify').post(authController.handleOTPVerification);
 authRouter.route('/generate').post(authController.generateOTP);
+authRouter.route('/remove').post(authController.removeOTP);
+
 
 authRouter.route('/forgot').post(authController.forgotPasswordActionHandler);
 
-
-
-// auth
 
 module.exports = authRouter;
