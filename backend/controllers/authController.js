@@ -117,8 +117,13 @@ const generateOTP = async (req, res, next) => {
             console.log('OTP: ', otp);
             otpFound = await OTPModel.create({ email, otp });
         }
-        if (otpFound) {
-            res.status(200).json({ status: 'success', message: 'OTP sent!', expiresIn: ((otpFound.createdAt.getTime()) + 5 * 60 * 1000) });
+
+        // TODO: remember to change it back to 5 minutes timer
+        if (otpFound && otpFound.createdAt.getTime() + 60 * 1000 > Date.now()) {
+            res.status(200).json({ status: 'success', message: 'OTP sent!', expiresIn: ((otpFound.createdAt.getTime()) + 60 * 1000) });
+        } else {
+            res.locals.statusCode = 400;
+            throw new Error("OTP has expired or not found");
         }
     } catch (err) {
         console.log(err);
@@ -165,6 +170,33 @@ const handleOTPVerification = async (req, res, next) => {
     }
 }
 
+const removeOTP = async (req, res, next) => {
+    try {
+        console.log('Removing OTP');
+        if (Object.keys(req.body).length === 0 || !req.body.email) {
+            res.locals.statusCode = 422;
+            throw new Error("Request body or its members not found");
+        }
+
+        const { email } = req.body;
+
+        console.log("Email: ", email);
+
+        const otpFound = await OTPModel.findOneAndDelete({ email });
+
+        if (!otpFound) {
+            res.locals.statusCode = 404;
+            throw new Error("OTP not found");
+        }
+
+        res.status(200).json({ status: 'success', message: 'OTP removed successfully' });
+    } catch (err) {
+        console.log(err);
+        next(err);
+    }
+}
+
+
 const forgotPasswordActionHandler = async (req, res, next) => {
     try {
         console.log('Processing forgot password request');
@@ -198,5 +230,5 @@ const forgotPasswordActionHandler = async (req, res, next) => {
 }
 
 module.exports = {
-    loginActionHandler, signupActionHandler, generateOTP, handleOTPVerification, forgotPasswordActionHandler
+    loginActionHandler, signupActionHandler, generateOTP, handleOTPVerification, forgotPasswordActionHandler, removeOTP
 }
