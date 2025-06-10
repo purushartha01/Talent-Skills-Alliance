@@ -496,6 +496,5 @@ const logStatements = (string, err = null) => {
 
 export {
     logStatements,
-    returnSkillsList,
-    returnTitlesList
+    returnSkillsList
 }
